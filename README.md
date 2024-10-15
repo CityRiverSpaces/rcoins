@@ -2,6 +2,7 @@
 # rcoins
 
 <!-- badges: start -->
+[![R-CMD-check](https://github.com/CityRiverSpaces/rcoins/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/CityRiverSpaces/rcoins/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 Identify continuous street strokes in a network using an approach based on the Continuity in Steet Network (COINS) method[^1].
