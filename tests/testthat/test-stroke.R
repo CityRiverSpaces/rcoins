@@ -130,7 +130,7 @@ test_that("strokes can be formed starting from a given edge", {
   l2 <- sf::st_linestring(c(p2, p5))
   l3 <- sf::st_linestring(c(p5, p6))
   sfc <- sf::st_sfc(l1, l2, l3)
-  expected <- sf::st_sfc(sf::st_linestring(c(p1, p2, p5, p6))
+  expected <- sf::st_sfc(sf::st_linestring(c(p1, p2, p5, p6)))
   actual <- stroke(sfc, flow_mode = FALSE, from_edge = 3)
   expect_equal(actual, expected)
 })
@@ -139,7 +139,7 @@ test_that("strokes can be formed starting from a given line segment", {
   l1 <- sf::st_linestring(c(p1, p2, p3))
   l2 <- sf::st_linestring(c(p2, p5, p6))
   sfc <- sf::st_sfc(l1, l2)
-  expected <- sf::st_sfc(sf::st_linestring(c(p1, p2, p5, p6))
+  expected <- sf::st_sfc(sf::st_linestring(c(p1, p2, p5, p6)))
   actual <- stroke(sfc, flow_mode = FALSE,
                    from_edge = sf::st_linestring(c(p5, p6)))
   expect_equal(actual, expected)
@@ -155,4 +155,3 @@ test_that("attributes can be returned if edge is specified in flow mode", {
   actual <- stroke(sfc, attribute = TRUE, flow_mode = TRUE, from_edge = 3)
   expect_equal(actual, expected)
 })
-
