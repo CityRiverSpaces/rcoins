@@ -13,14 +13,14 @@ stroke(
 )
 }
 \arguments{
-\item{edges}{An object of class \code{\link[sf]{sf}} or
-\code{\link[sfc]{sfc}}, including the edge geometries (should be of type
-LineString or MultiLineString).}
+\item{edges}{An object of class \code{\link[sfc]{sfc}} (or compatible),
+including the edge geometries (should be of type LineString or
+MultiLineString).}
 
 \item{angle_threshold}{Consecutive line segments can be considered part of
 the same stroke if the internal angle they form is larger than
 \code{angle_threshold} (in degrees). It should fall in the range
-\code{0 \le angle_threshold \lt 180}.}
+\eqn{0 \leq angle_threshold < 180}.}
 
 \item{attributes}{If \code{TRUE}, return a label for each edge, representing
 the groups each edge belongs to. Only possible for \code{flow_mode = TRUE}.}
@@ -33,7 +33,7 @@ are not split across strokes (even if they form internal angles smaller than
 provided edges or line segments.}
 }
 \value{
-An object of class \code{\link[sf]{sf}} (if
+An object of class \code{\link[sfc]{sfc}} (if
 \code{attributes = FALSE}), a vector with the same length as \code{edges}
 otherwise.
 }
