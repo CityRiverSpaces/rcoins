@@ -135,6 +135,8 @@ best_link <- function(nodes, segments, links, angle_threshold = 0) {
   best_links <- array(integer(), dim = dim(segments))
   colnames(best_links) <- c("start", "end")
 
+  angle_threshold_rad <- angle_threshold / 180 * pi  # convert to radians
+
   for (iseg in seq_len(nrow(segments))) {
     start_node <- segments[iseg, "start"]
     end_node <- segments[iseg, "end"]
@@ -143,17 +145,15 @@ best_link <- function(nodes, segments, links, angle_threshold = 0) {
     linked_segs <- get_linked_segments(iseg, start_node)
     linked_nodes <- get_linked_nodes(start_node, linked_segs)
     angles <- get_angle(start_node, end_node, linked_nodes)
-    best_links[iseg, "start"] <- get_best_link(angles,
-                                               linked_segs,
-                                               angle_threshold)
+    best_link <- get_best_link(angles, linked_segs, angle_threshold_rad)
+    if (length(best_link) > 0) best_links[iseg, "start"] <- best_link
 
     # find angles formed with all segments linked at end point
     linked_segs <- get_linked_segments(iseg, end_node)
     linked_nodes <- get_linked_nodes(end_node, linked_segs)
     angles <- get_angle(end_node, start_node, linked_nodes)
-    best_links[iseg, "end"] <- get_best_link(angles,
-                                             linked_segs,
-                                             angle_threshold)
+    best_link <- get_best_link(angles, linked_segs, angle_threshold_rad)
+    if (length(best_link) > 0) best_links[iseg, "end"] <- best_link
   }
   return(best_links)
 }
