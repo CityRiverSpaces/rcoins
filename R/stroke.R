@@ -81,7 +81,7 @@ unique_nodes <- function(edge_points) {
 #' @noRd
 to_line_segments <- function(points, nodes) {
   # label all the points using the node IDs
-  points <- dplyr::left_join(points, nodes, by = dplyr::join_by(x, y))
+  points <- dplyr::left_join(points, nodes, by = c("x", "y"))
 
   # use the attribute `linestring_id` to identify edge start- and end-points
   is_startpoint <- !duplicated(points$linestring_id)
