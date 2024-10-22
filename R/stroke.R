@@ -3,9 +3,9 @@
 #' Apply the Continuity in Street Network (COINS) method to identify
 #' sequences of edges that form naturally continuous strokes in a network.
 #'
-#' @param edges An object of class \code{\link[sf]{sf}} or
-#' \code{\link[sfc]{sfc}}, including the edge geometries (should be of type
-#' LineString or MultiLineString).
+#' @param edges An object of class \code{\link[sfc]{sfc}} (or compatible),
+#' including the edge geometries (should be of type LineString or
+#' MultiLineString).
 #'
 #' @param angle_threshold Consecutive line segments can be considered part of
 #' the same stroke if the internal angle they form is larger than
@@ -22,12 +22,12 @@
 #' @param from_edge Only look for the continuous strokes that include the
 #' provided edges or line segments.
 #'
-#' @return An object of class \code{\link[sf]{sf}} (if
+#' @return An object of class \code{\link[sfc]{sfc}} (if
 #' \code{attributes = FALSE}), a vector with the same length as \code{edges}
 #' otherwise.
 #'
 #' @export
-stroke <- function(edges, angle_threshold = 0., attributes = FALSE,
+stroke <- function(edges, angle_threshold = 0, attributes = FALSE,
                    flow_mode = FALSE, from_edge = NULL) {
 
   if (attributes) stop("attribute mode not implemented.")
@@ -67,15 +67,15 @@ stroke <- function(edges, angle_threshold = 0., attributes = FALSE,
   return(strokes)
 }
 
-
-# Find unique nodes and label them with IDs
+#' Find unique nodes and label them with IDs
+#' @noRd
 unique_nodes <- function(edge_points) {
   nodes <- dplyr::distinct(edge_points, x, y)
   nodes$node_id <- seq_len(nrow(nodes))
   return(nodes)
 }
 
-
+#' @noRd
 to_line_segments <- function(points, nodes) {
   # label all the points using the node IDs
   points <- dplyr::left_join(points, nodes, by = dplyr::join_by(x, y))
@@ -91,7 +91,7 @@ to_line_segments <- function(points, nodes) {
   return(segments)
 }
 
-
+#' @noRd
 get_links <- function(segments) {
   nsegments <- nrow(segments)
   connections <- data.frame(node_id = as.vector(segments)) |>
@@ -101,7 +101,7 @@ get_links <- function(segments) {
   return(connections)
 }
 
-
+#' @noRd
 best_link <- function(nodes, segments, links, angle_threshold = 0) {
 
   get_linked_segments <- function(segment_id, node_id) {
@@ -158,7 +158,7 @@ best_link <- function(nodes, segments, links, angle_threshold = 0) {
   return(best_links)
 }
 
-
+#' @noRd
 interior_angle <- function(v, p1, p2) {
   # compute convex angle between three points:
   # p1--v--p2 ("v" is the vertex)
@@ -174,8 +174,8 @@ interior_angle <- function(v, p1, p2) {
   return(angle)
 }
 
-
-get_best_link <- function(angles, links, angle_threshold = 0.) {
+#' @noRd
+get_best_link <- function(angles, links, angle_threshold = 0) {
   if (length(angles) == 0) return(NA)
   is_above_threshold <- angles > angle_threshold
   is_best_link <- which.max(angles[is_above_threshold])
@@ -183,7 +183,7 @@ get_best_link <- function(angles, links, angle_threshold = 0.) {
   return(best_link)
 }
 
-
+#' @noRd
 cross_check_links <- function(best_links, flow_mode = FALSE) {
 
   links <- array(integer(), dim = dim(best_links))
@@ -208,7 +208,7 @@ cross_check_links <- function(best_links, flow_mode = FALSE) {
   return(links)
 }
 
-
+#' @noRd
 merge_lines  <- function(nodes, segments, links, from_edge = NULL) {
 
   get_linked_nodes <- function(node_id, segment_id) {
