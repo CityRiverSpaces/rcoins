@@ -10,7 +10,7 @@
 #' @param angle_threshold Consecutive line segments can be considered part of
 #' the same stroke if the internal angle they form is larger than
 #' \code{angle_threshold} (in degrees). It should fall in the range
-#' \code{0 \le angle_threshold \lt 180}.
+#' \code{0 \leq angle_threshold < 180}.
 #'
 #' @param attributes If \code{TRUE}, return a label for each edge, representing
 #' the groups each edge belongs to. Only possible for \code{flow_mode = TRUE}.
