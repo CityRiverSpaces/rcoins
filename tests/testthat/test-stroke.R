@@ -3,12 +3,12 @@
 # p1 - p2 - p3
 #         \ |
 #           p5 - p6
-p1 <- sf::st_point(c(0,0))
-p2 <- sf::st_point(c(1,0))
-p3 <- sf::st_point(c(2,0))
-p4 <- sf::st_point(c(2,1))
-p5 <- sf::st_point(c(2,-1))
-p6 <- sf::st_point(c(3,-1))
+p1 <- sf::st_point(c(0, 0))
+p2 <- sf::st_point(c(1, 0))
+p3 <- sf::st_point(c(2, 0))
+p4 <- sf::st_point(c(2, 1))
+p5 <- sf::st_point(c(2, -1))
+p6 <- sf::st_point(c(3, -1))
 
 test_that("a stroke is found in a very simple network", {
   l1 <- sf::st_linestring(c(p1, p2))
