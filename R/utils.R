@@ -23,5 +23,4 @@ check_geometry <- function(geometry) {
     template <- "Edges should be of type LINESTRING (a %s is provided)."
     stop(sprintf(template, geometry_type[is_not_linestring]))
   }
-
 }
