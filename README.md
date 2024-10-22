@@ -15,7 +15,7 @@ Identify continuous street strokes in a network using an approach based on the C
 
 You can install the development version of rcoins like so:
 
-```{r}
+``` r
 # install.packages("devtools")
 devtools::install_github("CityRiverSpaces/rcoins")
 ```
