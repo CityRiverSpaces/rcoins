@@ -30,19 +30,22 @@
 stroke <- function(edges, angle_threshold = 0, attributes = FALSE,
                    flow_mode = FALSE, from_edge = NULL) {
 
-  if (attributes) stop("attribute mode not implemented.")
-  if (flow_mode) stop("flow mode not implemented.")
-  if (!is.null(from_edge)) stop("from_edge mode not implemented")
-
   if (attributes && !flow_mode) {
     stop("Stroke attributes can be returned only if `flow_mode = TRUE`)")
   }
 
+  if (attributes) stop("attribute mode not implemented.")
+  if (flow_mode) stop("flow mode not implemented.")
+  if (!is.null(from_edge)) stop("from_edge mode not implemented")
+
+  edges_sfc <- to_sfc(edges)
+  check_geometry(edges_sfc)
+
   # extract CRS from the edges
-  crs <- sf::st_crs(edges)
+  crs <- sf::st_crs(edges_sfc)
 
   # split the edges into their constituent points
-  edge_pts <- sfheaders::sfc_to_df(edges)
+  edge_pts <- sfheaders::sfc_to_df(edges_sfc)
 
   # find unique points ("nodes") and assign them IDs
   nodes <- unique_nodes(edge_pts)
