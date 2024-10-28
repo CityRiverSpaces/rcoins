@@ -129,12 +129,6 @@ best_link <- function(nodes, segments, links, angle_threshold = 0) {
     return(linked_nodes)
   }
 
-  get_angle <- function(vertex_id, p1_id, p2_id) {
-    # calculate interior angle
-    angle <- interior_angle(nodes[vertex_id, ], nodes[p1_id, ], nodes[p2_id, ])
-    return(angle)
-  }
-
   best_links <- array(integer(), dim = dim(segments))
   colnames(best_links) <- c("start", "end")
 
@@ -147,14 +141,18 @@ best_link <- function(nodes, segments, links, angle_threshold = 0) {
     # find angles formed with all segments linked at start point
     linked_segs <- get_linked_segments(iseg, start_node)
     linked_nodes <- get_linked_nodes(start_node, linked_segs)
-    angles <- get_angle(start_node, end_node, linked_nodes)
+    angles <- interior_angle(nodes[start_node, ],
+                             nodes[end_node, ],
+                             nodes[linked_nodes, ])
     best_link <- get_best_link(angles, linked_segs, angle_threshold_rad)
     if (length(best_link) > 0) best_links[iseg, "start"] <- best_link
 
     # find angles formed with all segments linked at end point
     linked_segs <- get_linked_segments(iseg, end_node)
     linked_nodes <- get_linked_nodes(end_node, linked_segs)
-    angles <- get_angle(end_node, start_node, linked_nodes)
+    angles <- interior_angle(nodes[end_node, ],
+                             nodes[start_node, ],
+                             nodes[linked_nodes, ])
     best_link <- get_best_link(angles, linked_segs, angle_threshold_rad)
     if (length(best_link) > 0) best_links[iseg, "end"] <- best_link
   }
