@@ -13,7 +13,7 @@ stroke(
 )
 }
 \arguments{
-\item{edges}{An object of class \code{\link[sfc]{sfc}} (or compatible),
+\item{edges}{An object of class \code{\link[sf]{sfc}} (or compatible),
 including the edge geometries (should be of type LineString or
 MultiLineString).}
 
@@ -33,7 +33,7 @@ are not split across strokes (even if they form internal angles smaller than
 provided edges or line segments.}
 }
 \value{
-An object of class \code{\link[sfc]{sfc}} (if
+An object of class \code{\link[sf]{sfc}} (if
 \code{attributes = FALSE}), a vector with the same length as \code{edges}
 otherwise.
 }
