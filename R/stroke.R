@@ -105,29 +105,31 @@ get_links <- function(segments) {
 }
 
 #' @noRd
+get_linked_segments <- function(segment_id, node_id, links) {
+  # find the segments connected to the given one via the given node
+  # 1. find all segments connected to the node
+  segs <- links[[node_id]]
+  # 2. exclude the given segment from the list
+  is_current_segment <- segs == segment_id
+  linked_segments <- segs[!is_current_segment]
+  return(linked_segments)
+}
+
+#' @noRd
+get_linked_nodes <- function(node_id, segment_id, segments) {
+  # find the node connected to the given one via the given segment(s)
+  # 1. get the nodes that are part of the given segment(s)
+  nds <- segments[segment_id, ]
+  # 2. flatten the array row by row (i.e. along the node dimension)
+  nds <- as.vector(t(nds))
+  # 3. exclude the given node from the list
+  is_current_node <- nds %in% node_id
+  linked_nodes <- nds[!is_current_node]
+  return(linked_nodes)
+}
+
+#' @noRd
 best_link <- function(nodes, segments, links, angle_threshold = 0) {
-
-  get_linked_segments <- function(segment_id, node_id) {
-    # find the segments connected to the given one via the given node
-    # 1. find all segments connected to the node
-    segs <- links[[node_id]]
-    # 2. exclude the given segment from the list
-    is_current_segment <- segs == segment_id
-    linked_segments <- segs[!is_current_segment]
-    return(linked_segments)
-  }
-
-  get_linked_nodes <- function(node_id, segment_id) {
-    # find the node connected to the given one via the given segment(s)
-    # 1. get the nodes that are part of the given segment(s)
-    nds <- segments[segment_id, ]
-    # 2. flatten the array row by row (i.e. along the node dimension)
-    nds <- as.vector(t(nds))
-    # 3. exclude the given node from the list
-    is_current_node <- nds %in% node_id
-    linked_nodes <- nds[!is_current_node]
-    return(linked_nodes)
-  }
 
   best_links <- array(integer(), dim = dim(segments))
   colnames(best_links) <- c("start", "end")
@@ -139,8 +141,8 @@ best_link <- function(nodes, segments, links, angle_threshold = 0) {
     end_node <- segments[iseg, "end"]
 
     # find angles formed with all segments linked at start point
-    linked_segs <- get_linked_segments(iseg, start_node)
-    linked_nodes <- get_linked_nodes(start_node, linked_segs)
+    linked_segs <- get_linked_segments(iseg, start_node, links)
+    linked_nodes <- get_linked_nodes(start_node, linked_segs, segments)
     angles <- interior_angle(nodes[start_node, ],
                              nodes[end_node, ],
                              nodes[linked_nodes, ])
@@ -148,8 +150,8 @@ best_link <- function(nodes, segments, links, angle_threshold = 0) {
     if (length(best_link) > 0) best_links[iseg, "start"] <- best_link
 
     # find angles formed with all segments linked at end point
-    linked_segs <- get_linked_segments(iseg, end_node)
-    linked_nodes <- get_linked_nodes(end_node, linked_segs)
+    linked_segs <- get_linked_segments(iseg, end_node, links)
+    linked_nodes <- get_linked_nodes(end_node, linked_segs, segments)
     angles <- interior_angle(nodes[end_node, ],
                              nodes[start_node, ],
                              nodes[linked_nodes, ])
@@ -210,23 +212,25 @@ cross_check_links <- function(best_links, flow_mode = FALSE) {
 }
 
 #' @noRd
+get_nodes <- function(node_id, segment_id, segments) {
+  # find the node connected to the given one via the given segment(s)
+  # 1. get the nodes that are part of the given segment(s)
+  nds <- segments[segment_id, ]
+  # 2. exclude the given node from the list
+  is_current_node <- nds == node_id
+  linked_nodes <- nds[!is_current_node]
+  return(linked_nodes)
+}
+
+#' @noRd
+to_linestring <- function(node_id, nodes) {
+  points <- nodes[node_id, ]
+  linestring <- sfheaders::sfc_linestring(points, x = "x", y = "y")
+  return(linestring)
+}
+
+#' @noRd
 merge_lines  <- function(nodes, segments, links, from_edge = NULL) {
-
-  get_linked_nodes <- function(node_id, segment_id) {
-    # find the node connected to the given one via the given segment(s)
-    # 1. get the nodes that are part of the given segment(s)
-    nds <- segments[segment_id, ]
-    # 2. exclude the given node from the list
-    is_current_node <- nds == node_id
-    linked_nodes <- nds[!is_current_node]
-    return(linked_nodes)
-  }
-
-  to_linestring <- function(node_id) {
-    points <- nodes[node_id, ]
-    linestring <- sfheaders::sfc_linestring(points, x = "x", y = "y")
-    return(linestring)
-  }
 
   is_segment_used <- array(FALSE, dim = nrow(segments))
   strokes <- sf::st_sfc()
@@ -242,7 +246,7 @@ merge_lines  <- function(nodes, segments, links, from_edge = NULL) {
       stroke <- c(point, stroke)
       is_segment_used[current] <- TRUE
       if (is.na(link) || is_closed_loop) break
-      point <- get_linked_nodes(point, link)
+      point <- get_nodes(point, link, segments)
       is_closed_loop <- point %in% stroke
       current <- link
       link <- links[current, names(point)]
@@ -256,12 +260,12 @@ merge_lines  <- function(nodes, segments, links, from_edge = NULL) {
       stroke <- c(stroke, point)
       is_segment_used[current] <- TRUE
       if (is.na(link) || is_closed_loop) break
-      point <- get_linked_nodes(point, link)
+      point <- get_nodes(point, link, segments)
       is_closed_loop <- point %in% stroke
       current <- link
       link <- links[current, names(point)]
     }
-    strokes <- c(strokes, to_linestring(stroke))
+    strokes <- c(strokes, to_linestring(stroke, nodes))
   }
   return(strokes)
 }
