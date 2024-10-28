@@ -22,7 +22,7 @@
 #' @param from_edge Only look for the continuous strokes that include the
 #' provided edges or line segments.
 #'
-#' @return An object of class \code{\link[sfc]{sfc}} (if
+#' @return An object of class \code{\link[sf]{sfc}} (if
 #' \code{attributes = FALSE}), a vector with the same length as \code{edges}
 #' otherwise.
 #'
