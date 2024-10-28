@@ -3,7 +3,7 @@
 #' Apply the Continuity in Street Network (COINS) method to identify
 #' sequences of edges that form naturally continuous strokes in a network.
 #'
-#' @param edges An object of class \code{\link[sfc]{sfc}} (or compatible),
+#' @param edges An object of class \code{\link[sf]{sfc}} (or compatible),
 #' including the edge geometries (should be of type LineString or
 #' MultiLineString).
 #'
@@ -22,7 +22,7 @@
 #' @param from_edge Only look for the continuous strokes that include the
 #' provided edges or line segments.
 #'
-#' @return An object of class \code{\link[sfc]{sfc}} (if
+#' @return An object of class \code{\link[sf]{sfc}} (if
 #' \code{attributes = FALSE}), a vector with the same length as \code{edges}
 #' otherwise.
 #'
@@ -97,11 +97,11 @@ to_line_segments <- function(points, nodes) {
 #' @noRd
 get_links <- function(segments) {
   nsegments <- nrow(segments)
-  connections <- data.frame(node_id = as.vector(segments)) |>
+  links <- data.frame(node_id = as.vector(segments)) |>
     dplyr::group_by(node_id) |>
     dplyr::group_rows()  |>
     lapply(function(x) (x - 1) %% nsegments + 1)
-  return(connections)
+  return(links)
 }
 
 #' @noRd
