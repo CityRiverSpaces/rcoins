@@ -3,7 +3,7 @@
 #' Apply the Continuity in Street Network (COINS) method to identify
 #' sequences of edges that form naturally continuous strokes in a network.
 #'
-#' @param edges An object of class \code{\link[sfc]{sfc}} (or compatible),
+#' @param edges An object of class \code{\link[sf]{sfc}} (or compatible),
 #' including the edge geometries (should be of type LineString or
 #' MultiLineString).
 #'
