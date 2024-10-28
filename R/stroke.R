@@ -97,11 +97,11 @@ to_line_segments <- function(points, nodes) {
 #' @noRd
 get_links <- function(segments) {
   nsegments <- nrow(segments)
-  connections <- data.frame(node_id = as.vector(segments)) |>
+  links <- data.frame(node_id = as.vector(segments)) |>
     dplyr::group_by(node_id) |>
     dplyr::group_rows()  |>
     lapply(function(x) (x - 1) %% nsegments + 1)
-  return(connections)
+  return(links)
 }
 
 #' @noRd
