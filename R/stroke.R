@@ -212,14 +212,23 @@ cross_check_links <- function(best_links, flow_mode = FALSE) {
 }
 
 #' @noRd
-get_nodes <- function(node_id, segment_id, segments) {
-  # find the node connected to the given one via the given segment(s)
-  # 1. get the nodes that are part of the given segment(s)
-  nds <- segments[segment_id, ]
+get_next_node <- function(node, segment, segments) {
+  # find the node connected to the given one via the given segment
+  # 1. get the nodes that are part of the given segment
+  nodes <- segments[segment, ]
   # 2. exclude the given node from the list
-  is_current_node <- nds == node_id
-  linked_nodes <- nds[!is_current_node]
-  return(linked_nodes)
+  is_current <- nodes == node
+  return(nodes[!is_current])
+}
+
+#' @noRd
+get_next_segment <- function(segment, link, links) {
+  # find the segment connected to the given one via the given link
+  #  1. get the segments connected to the given link
+  segments <- links[link, ]
+  #  2. exclude the given segment from the list
+  is_current <- segments == segment
+  return(segments[!is_current])
 }
 
 #' @noRd
@@ -234,36 +243,38 @@ merge_lines  <- function(nodes, segments, links, from_edge = NULL) {
 
   is_segment_used <- array(FALSE, dim = nrow(segments))
   strokes <- sf::st_sfc()
+
   for (iseg in seq_len(nrow(segments))) {
     if (is_segment_used[iseg]) next
-    stroke  <- c()
 
-    point <- segments[iseg, "start"]
+    stroke <- segments[iseg, ]
+
+    is_segment_used[iseg] <- TRUE
+
+    node  <- segments[iseg, "start"]
     link <- links[iseg, "start"]
-    current <- iseg
-    is_closed_loop <- FALSE
+    segment <- iseg
     while (TRUE) {
-      stroke <- c(point, stroke)
-      is_segment_used[current] <- TRUE
-      if (is.na(link) || is_closed_loop) break
-      point <- get_nodes(point, link, segments)
-      is_closed_loop <- point %in% stroke
-      current <- link
-      link <- links[current, names(point)]
+      if (is.na(link) || is_segment_used[link]) break
+      node <- get_next_node(node, link, segments)
+      stroke <- c(node, stroke)
+      is_segment_used[link] <- TRUE
+      new <- get_next_segment(segment, link, links)
+      segment <- link
+      link <- new
     }
 
-    point <- segments[iseg, "end"]
+    node  <- segments[iseg, "end"]
     link <- links[iseg, "end"]
-    current <- iseg
-    is_closed_loop <- FALSE
+    segment <- iseg
     while (TRUE) {
-      stroke <- c(stroke, point)
-      is_segment_used[current] <- TRUE
-      if (is.na(link) || is_closed_loop) break
-      point <- get_nodes(point, link, segments)
-      is_closed_loop <- point %in% stroke
-      current <- link
-      link <- links[current, names(point)]
+      if (is.na(link) || is_segment_used[link]) break
+      node <- get_next_node(node, link, segments)
+      stroke <- c(stroke, node)
+      is_segment_used[link] <- TRUE
+      new <- get_next_segment(segment, link, links)
+      segment <- link
+      link <- new
     }
     strokes <- c(strokes, to_linestring(stroke, nodes))
   }

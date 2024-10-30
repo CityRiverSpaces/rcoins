@@ -1,7 +1,7 @@
 #           p4
 #         /
 # p1 - p2 - p3
-#         \ |
+#         \ |  \
 #           p5 - p6
 p1 <- sf::st_point(c(0, 0))
 p2 <- sf::st_point(c(1, 0))
@@ -14,12 +14,35 @@ l1 <- sf::st_linestring(c(p1, p2))
 l2 <- sf::st_linestring(c(p2, p3))
 l3 <- sf::st_linestring(c(p2, p4))
 l4 <- sf::st_linestring(c(p2, p5))
-l5 <- sf::st_linestring(c(p5, p3))
-l6 <- sf::st_linestring(c(p5, p6))
+l5 <- sf::st_linestring(c(p3, p5))
+l6 <- sf::st_linestring(c(p3, p6))
+l7 <- sf::st_linestring(c(p5, p6))
+
 
 test_that("a stroke is found in a very simple network", {
   sfc <- sf::st_sfc(l1, l2, l3)
   expected <- sf::st_sfc(sf::st_linestring(c(p1, p2, p3)), l3)
+  actual <- stroke(sfc)
+  expect_setequal(actual, expected)
+})
+
+test_that("a ring is recognized as a stroke", {
+  sfc <- sf::st_sfc(l2, l4, l6, l7)
+  expected <- sf::st_sfc(sf::st_linestring(c(p3, p6, p5, p2, p3)))
+  actual <- stroke(sfc)
+  expect_setequal(actual, expected)
+})
+
+test_that("a ring with a branch is recognized as one stroke", {
+  sfc <- sf::st_sfc(l1, l2, l4, l6, l7)
+  expected <- sf::st_sfc(sf::st_linestring(c(p1, p2, p3, p6, p5, p2)))
+  actual <- stroke(sfc)
+  expect_setequal(actual, expected)
+})
+
+test_that("more strokes are recognized in a ring with multiple branches", {
+  sfc <- sf::st_sfc(l1, l2, l3, l4, l6, l7)
+  expected <- sf::st_sfc(sf::st_linestring(c(p1, p2, p3, p6, p5, p2)), l3)
   actual <- stroke(sfc)
   expect_setequal(actual, expected)
 })
@@ -67,14 +90,14 @@ test_that("two linesegments are always merged if threshold is zero", {
 })
 
 test_that("a more complex network with no threshold form a stroke", {
-  sfc <- sf::st_sfc(l1, l4, l5, l6)
+  sfc <- sf::st_sfc(l1, l4, l5, l7)
   expected <- sf::st_sfc(sf::st_linestring(c(p1, p2, p5, p6)), l5)
   actual <- stroke(sfc, angle_threshold = 0)
   expect_setequal(actual, expected)
 })
 
 test_that("a more complex network with threshold does not form strokes", {
-  sfc <- sf::st_sfc(l1, l4, l5, l6)
+  sfc <- sf::st_sfc(l1, l4, l5, l7)
   expected <- sfc
   actual <- stroke(sfc, angle_threshold = 150.)
   expect_setequal(actual, expected)
@@ -108,7 +131,7 @@ test_that("edges are not split if flow_mode is true", {
 test_that("strokes can be formed starting from a given edge", {
   skip(message = "stroke from edge to be implemented")
   l1 <- sf::st_linestring(c(p1, p2, p3))
-  sfc <- sf::st_sfc(l1, l4, l6)
+  sfc <- sf::st_sfc(l1, l4, l7)
   expected <- sf::st_sfc(sf::st_linestring(c(p1, p2, p5, p6)))
   actual <- stroke(sfc, flow_mode = FALSE, from_edge = 3)
   expect_setequal(actual, expected)
@@ -127,7 +150,7 @@ test_that("strokes can be formed starting from a given line segment", {
 
 test_that("attributes can be returned if edge is specified in flow mode", {
   skip(message = "flow mode to be implemented")
-  sfc <- sf::st_sfc(l1, l2, l5, l6)
+  sfc <- sf::st_sfc(l1, l2, l5, l7)
   expected <- as.integer(c(1, NA, 1, 1))
   actual <- stroke(sfc, attribute = TRUE, flow_mode = TRUE, from_edge = 3)
   expect_setequal(actual, expected)
