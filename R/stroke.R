@@ -131,6 +131,9 @@ get_linked_nodes <- function(node_id, segment_id, segments) {
 #' @noRd
 best_link <- function(nodes, segments, links, angle_threshold = 0) {
 
+  # convert nodes to a matrix for faster indexing
+  nodes <- as.matrix(nodes[c("x", "y")])
+
   best_links <- array(integer(), dim = dim(segments))
   colnames(best_links) <- c("start", "end")
 
@@ -144,8 +147,8 @@ best_link <- function(nodes, segments, links, angle_threshold = 0) {
     linked_segs <- get_linked_segments(iseg, start_node, links)
     linked_nodes <- get_linked_nodes(start_node, linked_segs, segments)
     angles <- interior_angle(nodes[start_node, ],
-                             nodes[end_node, ],
-                             nodes[linked_nodes, ])
+                             nodes[end_node, , drop = FALSE],
+                             nodes[linked_nodes, , drop = FALSE])
     best_link <- get_best_link(angles, linked_segs, angle_threshold_rad)
     if (length(best_link) > 0) best_links[iseg, "start"] <- best_link
 
@@ -153,8 +156,8 @@ best_link <- function(nodes, segments, links, angle_threshold = 0) {
     linked_segs <- get_linked_segments(iseg, end_node, links)
     linked_nodes <- get_linked_nodes(end_node, linked_segs, segments)
     angles <- interior_angle(nodes[end_node, ],
-                             nodes[start_node, ],
-                             nodes[linked_nodes, ])
+                             nodes[start_node, , drop = FALSE],
+                             nodes[linked_nodes, , drop = FALSE])
     best_link <- get_best_link(angles, linked_segs, angle_threshold_rad)
     if (length(best_link) > 0) best_links[iseg, "end"] <- best_link
   }
@@ -165,10 +168,11 @@ best_link <- function(nodes, segments, links, angle_threshold = 0) {
 interior_angle <- function(v, p1, p2) {
   # compute convex angle between three points:
   # p1--v--p2 ("v" is the vertex)
-  dx1 <- p1$x - v$x
-  dx2 <- p2$x - v$x
-  dy1 <- p1$y - v$y
-  dy2 <- p2$y - v$y
+  # NOTE: multiple points are supported as p1 and p2
+  dx1 <- p1[, "x"] - v["x"]
+  dx2 <- p2[, "x"] - v["x"]
+  dy1 <- p1[, "y"] - v["y"]
+  dy2 <- p2[, "y"] - v["y"]
   dot_product <- dx1 * dx2 + dy1 * dy2
   norm1 <- sqrt(dx1^2 + dy1^2)
   norm2 <- sqrt(dx2^2 + dy2^2)
