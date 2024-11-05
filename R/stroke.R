@@ -193,28 +193,42 @@ get_best_link <- function(angles, links, angle_threshold = 0) {
 }
 
 #' @noRd
+check_reciprocal <- function(links, best_links, colname) {
+    # keep only indices that are between 0 and the length of best_links
+    valid_indices <- best_links[, colname]
+    valid_indices <- valid_indices[valid_indices > 0 & valid_indices <= nrow(best_links)]
+    # find the best link of the best links 
+    bl <- best_links[valid_indices, , drop = FALSE]
+    # we check both ends to see whether the best link is reciprocal 
+    is_best_link <- bl == seq_len(nrow(bl))
+    # if we have a match on either of the sides, we keep the link 
+    is_reciprocal <- apply(is_best_link, 1, any)
+    # fix for NA values
+    is_reciprocal[is.na(is_reciprocal)] <- FALSE  
+    links[is_reciprocal, colname] <- best_links[is_reciprocal, colname]
+    
+    return(links)
+}
+
 cross_check_links <- function(best_links, flow_mode = FALSE) {
+    links <- array(integer(), dim = dim(best_links))
+    colnames(links) <- c("start", "end")
+    
+    links <- check_reciprocal(links, best_links, "start")
+    links <- check_reciprocal(links, best_links, "end")
+    
+    return(links)
+}
 
-  links <- array(integer(), dim = dim(best_links))
-  colnames(links) <- c("start", "end")
-
-  # find the best link of the best links
-  bl <- best_links[best_links[, "start"], ]
-  # we check both ends to see whether the best link is reciprocal
-  is_best_link <- bl == seq_len(nrow(bl))
-  # if we have a match on either of the sides, we keep the link
-  is_reciprocal <- apply(is_best_link, 1, any)
-  is_reciprocal[is.na(is_reciprocal)] <- FALSE  # fix for NA values
-  links[is_reciprocal, "start"] <- best_links[is_reciprocal, "start"]
-
-  # exact same as above, for the other side
-  bl <- best_links[best_links[, "end"], ]
-  is_best_link <- bl == seq_len(nrow(bl))
-  is_reciprocal <- apply(is_best_link, 1, any)
-  is_reciprocal[is.na(is_reciprocal)] <- FALSE  # fix for NA values
-  links[is_reciprocal, "end"] <- best_links[is_reciprocal, "end"]
-
-  return(links)
+#' @noRd
+cross_check_links <- function(best_links, flow_mode = FALSE) {
+    links <- array(integer(), dim = dim(best_links))
+    colnames(links) <- c("start", "end")
+    
+    links <- check_reciprocal(links, best_links, "start")
+    links <- check_reciprocal(links, best_links, "end")
+    
+    return(links)
 }
 
 #' @noRd
