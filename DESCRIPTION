@@ -19,5 +19,6 @@ Suggests:
 Config/testthat/edition: 3
 Imports:
     dplyr,
+    rlang,
     sf,
     sfheaders
