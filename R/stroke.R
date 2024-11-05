@@ -130,38 +130,40 @@ get_linked_nodes <- function(node_id, segment_id, segments) {
 
 #' @noRd
 best_link <- function(nodes, segments, links, angle_threshold = 0) {
+    
+    # convert nodes to a matrix for faster indexing
+    nodes <- as.matrix(nodes[c("x", "y")])
+    
+    best_links <- array(integer(), dim = dim(segments))
+    colnames(best_links) <- c("start", "end")
+    
+    angle_threshold_rad <- angle_threshold / 180 * pi  # convert to radians
+    
+    for (iseg in seq_len(nrow(segments))) {
+        start_node <- segments[iseg, "start"]
+        end_node <- segments[iseg, "end"]
+        
+        # Use the helper function to determine best link at start and end nodes
+        best_link_start <- find_best_link(start_node, end_node, iseg, segments, links)
+        if (length(best_link_start) > 0) best_links[iseg, "start"] <- best_link_start
+        
+        best_link_end <- find_best_link(end_node, start_node, iseg, segments, links)
+        if (length(best_link_end) > 0) best_links[iseg, "end"] <- best_link_end
+    }
+    return(best_links)
+}
 
-  # convert nodes to a matrix for faster indexing
-  nodes <- as.matrix(nodes[c("x", "y")])
-
-  best_links <- array(integer(), dim = dim(segments))
-  colnames(best_links) <- c("start", "end")
-
-  angle_threshold_rad <- angle_threshold / 180 * pi  # convert to radians
-
-  for (iseg in seq_len(nrow(segments))) {
-    start_node <- segments[iseg, "start"]
-    end_node <- segments[iseg, "end"]
-
-    # find angles formed with all segments linked at start point
-    linked_segs <- get_linked_segments(iseg, start_node, links)
-    linked_nodes <- get_linked_nodes(start_node, linked_segs, segments)
-    angles <- interior_angle(nodes[start_node, ],
-                             nodes[end_node, , drop = FALSE],
-                             nodes[linked_nodes, , drop = FALSE])
+#' @noRd
+find_best_link <- function(node, opposite_node, iseg, segments, links) {
+    linked_segs <- get_linked_segments(iseg, node, links)
+    linked_nodes <- get_linked_nodes(node, linked_segs, segments)
+    angles <- interior_angle(
+        nodes[node, ],
+        nodes[opposite_node, , drop = FALSE],
+        nodes[linked_nodes, , drop = FALSE]
+    )
     best_link <- get_best_link(angles, linked_segs, angle_threshold_rad)
-    if (length(best_link) > 0) best_links[iseg, "start"] <- best_link
-
-    # find angles formed with all segments linked at end point
-    linked_segs <- get_linked_segments(iseg, end_node, links)
-    linked_nodes <- get_linked_nodes(end_node, linked_segs, segments)
-    angles <- interior_angle(nodes[end_node, ],
-                             nodes[start_node, , drop = FALSE],
-                             nodes[linked_nodes, , drop = FALSE])
-    best_link <- get_best_link(angles, linked_segs, angle_threshold_rad)
-    if (length(best_link) > 0) best_links[iseg, "end"] <- best_link
-  }
-  return(best_links)
+    return(best_link)
 }
 
 #' @noRd
