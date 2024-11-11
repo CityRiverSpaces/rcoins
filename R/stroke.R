@@ -194,11 +194,11 @@ get_best_link <- function(angles, links, angle_threshold = 0) {
 }
 
 #' @noRd
-check_reciprocal <- function(links, best_links, colname) {
   # keep only indices that are between 0 and the length of best_links
   valid_indices <- best_links[, colname]
   valid_indices <- valid_indices[valid_indices > 0 &
                                      valid_indices <= nrow(best_links)]
+check_reciprocal <- function(best_links, side) {
   # find the best link of the best links
   bl <- best_links[valid_indices, , drop = FALSE]
   # we check both ends to see whether the best link is reciprocal
@@ -207,9 +207,8 @@ check_reciprocal <- function(links, best_links, colname) {
   is_reciprocal <- apply(is_best_link, 1, any)
   # fix for NA values
   is_reciprocal[is.na(is_reciprocal)] <- FALSE
-  links[is_reciprocal, colname] <- best_links[is_reciprocal, colname]
-    
-    return(links)
+
+  return(best_links[is_reciprocal, side])
 }
 
 #' @noRd
@@ -217,8 +216,8 @@ cross_check_links <- function(best_links, flow_mode = FALSE) {
   links <- array(integer(), dim = dim(best_links))
   colnames(links) <- c("start", "end")
     
-  links <- check_reciprocal(links, best_links, "start")
-  links <- check_reciprocal(links, best_links, "end")
+  links[, "start"] <- check_reciprocal(best_links, "start")
+  links[, "end"] <- check_reciprocal(best_links, "end")
   
   return(links)
 }
