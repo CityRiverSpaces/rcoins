@@ -66,7 +66,7 @@ stroke <- function(edges, angle_threshold = 0, attributes = FALSE,
   final_links <- cross_check_links(best_links, flow_mode)
 
   # merge line segments into strokes following the predetermined connectivity
-  strokes  <- merge_lines(nodes, segments, final_links, from_edge)
+  strokes <- merge_lines(nodes, segments, final_links, from_edge)
 
   # add the CRS to the edges, done!
   sf::st_crs(strokes) <- crs
