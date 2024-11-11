@@ -144,12 +144,14 @@ best_link <- function(nodes, segments, links, angle_threshold = 0) {
     end_node <- segments[iseg, "end"]
 
     best_link_start <- find_best_link(start_node, end_node, 
-                                      iseg, segments, links)
+                                      iseg, segments, links, 
+                                      nodes, angle_threshold)
     if (length(best_link_start) > 0)
         best_links[iseg, "start"] <- best_link_start
 
     best_link_end <- find_best_link(end_node, start_node, 
-                                    iseg, segments, links)
+                                    iseg, segments, links, 
+                                    nodes, angle_threshold)
     if (length(best_link_end) > 0)
         best_links[iseg, "end"] <- best_link_end
   }
@@ -157,13 +159,15 @@ best_link <- function(nodes, segments, links, angle_threshold = 0) {
 }
 
 #' @noRd
-find_best_link <- function(node, opposite_node, current_segment, segments, links) {
+find_best_link <- function(node, opposite_node,
+                           current_segment, segments, links, 
+                           nodes, angle_threshold) {
   linked_segs <- get_linked_segments(current_segment, node, links)
   linked_nodes <- get_linked_nodes(node, linked_segs, segments)
   angles <- interior_angle(nodes[node, ], 
                            nodes[opposite_node, , drop = FALSE], 
                            nodes[linked_nodes, , drop = FALSE])
-  best_link <- get_best_link(angles, linked_segs, angle_threshold_rad)
+  best_link <- get_best_link(angles, linked_segs, angle_threshold)
   return(best_link)
 }
 
