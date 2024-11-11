@@ -251,7 +251,7 @@ to_linestring <- function(node_id, nodes) {
 
 #' @noRd
 traverse_segments <- function(start_node, start_link, start_segment,
-                              direction, segments, links, is_segment_used) {
+                              segments, links, is_segment_used) {
   node <- start_node
   link <- start_link
   segment <- start_segment
@@ -260,11 +260,8 @@ traverse_segments <- function(start_node, start_link, start_segment,
   while (TRUE) {
     if (is.na(link) || is_segment_used[link]) break
     node <- get_next_node(node, link, segments)
-    if (direction == "forward") {
-      stroke <- c(node, stroke)
-    } else {
-      stroke <- c(stroke, node)
-    }
+    stroke <- c(node, stroke)
+
     # Modify the local is_segment_used
     is_segment_used[link] <- TRUE
     new_link <- get_next_segment(segment, link, links)
@@ -290,7 +287,7 @@ merge_lines  <- function(nodes, segments, links, from_edge = NULL) {
     node  <- segments[iseg, "start"]
     link <- links[iseg, "start"]
     segment <- iseg
-    forward_result <- traverse_segments(node, link, segment, "forward",
+    forward_result <- traverse_segments(node, link, segment,
                                         segments, links, is_segment_used)
     forward_stroke <- forward_result$stroke
     is_segment_used <- forward_result$is_segment_used
@@ -299,9 +296,9 @@ merge_lines  <- function(nodes, segments, links, from_edge = NULL) {
     node  <- segments[iseg, "end"]
     link <- links[iseg, "end"]
     segment <- iseg
-    backward_result <- traverse_segments(node, link, segment, "backward",
+    backward_result <- traverse_segments(node, link, segment,
                                          segments, links, is_segment_used)
-    backward_stroke <- backward_result$stroke
+    backward_stroke <- rev(backward_result$stroke)
     is_segment_used <- backward_result$is_segment_used
 
     # Combine strokes and add to results
