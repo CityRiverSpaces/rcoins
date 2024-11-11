@@ -130,40 +130,41 @@ get_linked_nodes <- function(node_id, segment_id, segments) {
 
 #' @noRd
 best_link <- function(nodes, segments, links, angle_threshold = 0) {
+  # convert nodes to a matrix for faster indexing
+  nodes <- as.matrix(nodes[c("x", "y")])
     
-    # convert nodes to a matrix for faster indexing
-    nodes <- as.matrix(nodes[c("x", "y")])
+  best_links <- array(integer(), dim = dim(segments))
+  colnames(best_links) <- c("start", "end")
+  
+  angle_threshold_rad <- angle_threshold / 180 * pi  # convert to radians
+  
+  for (iseg in seq_len(nrow(segments))) {
+    start_node <- segments[iseg, "start"]
+    end_node <- segments[iseg, "end"]
     
-    best_links <- array(integer(), dim = dim(segments))
-    colnames(best_links) <- c("start", "end")
+    # Use the helper function to determine best link at start and end nodes
+    best_link_start <- find_best_link(start_node, end_node, 
+                                      iseg, segments, links)
+    if (length(best_link_start) > 0)
+        best_links[iseg, "start"] <- best_link_start
     
-    angle_threshold_rad <- angle_threshold / 180 * pi  # convert to radians
-    
-    for (iseg in seq_len(nrow(segments))) {
-        start_node <- segments[iseg, "start"]
-        end_node <- segments[iseg, "end"]
-        
-        # Use the helper function to determine best link at start and end nodes
-        best_link_start <- find_best_link(start_node, end_node, iseg, segments, links)
-        if (length(best_link_start) > 0) best_links[iseg, "start"] <- best_link_start
-        
-        best_link_end <- find_best_link(end_node, start_node, iseg, segments, links)
-        if (length(best_link_end) > 0) best_links[iseg, "end"] <- best_link_end
-    }
-    return(best_links)
+    best_link_end <- find_best_link(end_node, start_node, 
+                                    iseg, segments, links)
+    if (length(best_link_end) > 0)
+        best_links[iseg, "end"] <- best_link_end
+  }
+  return(best_links)
 }
 
 #' @noRd
 find_best_link <- function(node, opposite_node, iseg, segments, links) {
-    linked_segs <- get_linked_segments(iseg, node, links)
-    linked_nodes <- get_linked_nodes(node, linked_segs, segments)
-    angles <- interior_angle(
-        nodes[node, ],
-        nodes[opposite_node, , drop = FALSE],
-        nodes[linked_nodes, , drop = FALSE]
-    )
-    best_link <- get_best_link(angles, linked_segs, angle_threshold_rad)
-    return(best_link)
+  linked_segs <- get_linked_segments(iseg, node, links)
+  linked_nodes <- get_linked_nodes(node, linked_segs, segments)
+  angles <- interior_angle(nodes[node, ], 
+                           nodes[opposite_node, , drop = FALSE], 
+                           nodes[linked_nodes, , drop = FALSE])
+  best_link <- get_best_link(angles, linked_segs, angle_threshold_rad)
+  return(best_link)
 }
 
 #' @noRd
@@ -194,31 +195,32 @@ get_best_link <- function(angles, links, angle_threshold = 0) {
 
 #' @noRd
 check_reciprocal <- function(links, best_links, colname) {
-    # keep only indices that are between 0 and the length of best_links
-    valid_indices <- best_links[, colname]
-    valid_indices <- valid_indices[valid_indices > 0 & valid_indices <= nrow(best_links)]
-    # find the best link of the best links 
-    bl <- best_links[valid_indices, , drop = FALSE]
-    # we check both ends to see whether the best link is reciprocal 
-    is_best_link <- bl == seq_len(nrow(bl))
-    # if we have a match on either of the sides, we keep the link 
-    is_reciprocal <- apply(is_best_link, 1, any)
-    # fix for NA values
-    is_reciprocal[is.na(is_reciprocal)] <- FALSE  
-    links[is_reciprocal, colname] <- best_links[is_reciprocal, colname]
+  # keep only indices that are between 0 and the length of best_links
+  valid_indices <- best_links[, colname]
+  valid_indices <- valid_indices[valid_indices > 0 &
+                                     valid_indices <= nrow(best_links)]
+  # find the best link of the best links
+  bl <- best_links[valid_indices, , drop = FALSE]
+  # we check both ends to see whether the best link is reciprocal
+  is_best_link <- bl == seq_len(nrow(bl))
+  # if we have a match on either of the sides, we keep the link
+  is_reciprocal <- apply(is_best_link, 1, any)
+  # fix for NA values
+  is_reciprocal[is.na(is_reciprocal)] <- FALSE
+  links[is_reciprocal, colname] <- best_links[is_reciprocal, colname]
     
     return(links)
 }
 
 #' @noRd
 cross_check_links <- function(best_links, flow_mode = FALSE) {
-    links <- array(integer(), dim = dim(best_links))
-    colnames(links) <- c("start", "end")
+  links <- array(integer(), dim = dim(best_links))
+  colnames(links) <- c("start", "end")
     
-    links <- check_reciprocal(links, best_links, "start")
-    links <- check_reciprocal(links, best_links, "end")
-    
-    return(links)
+  links <- check_reciprocal(links, best_links, "start")
+  links <- check_reciprocal(links, best_links, "end")
+  
+  return(links)
 }
 
 #' @noRd
