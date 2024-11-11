@@ -142,7 +142,6 @@ best_link <- function(nodes, segments, links, angle_threshold = 0) {
     start_node <- segments[iseg, "start"]
     end_node <- segments[iseg, "end"]
     
-    # Use the helper function to determine best link at start and end nodes
     best_link_start <- find_best_link(start_node, end_node, 
                                       iseg, segments, links)
     if (length(best_link_start) > 0)
