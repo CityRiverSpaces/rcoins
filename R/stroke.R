@@ -156,8 +156,8 @@ best_link <- function(nodes, segments, links, angle_threshold = 0) {
 }
 
 #' @noRd
-find_best_link <- function(node, opposite_node, iseg, segments, links) {
-  linked_segs <- get_linked_segments(iseg, node, links)
+find_best_link <- function(node, opposite_node, current_segment, segments, links) {
+  linked_segs <- get_linked_segments(current_segment, node, links)
   linked_nodes <- get_linked_nodes(node, linked_segs, segments)
   angles <- interior_angle(nodes[node, ], 
                            nodes[opposite_node, , drop = FALSE], 
