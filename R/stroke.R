@@ -194,13 +194,9 @@ get_best_link <- function(angles, links, angle_threshold = 0) {
 }
 
 #' @noRd
-  # keep only indices that are between 0 and the length of best_links
-  valid_indices <- best_links[, colname]
-  valid_indices <- valid_indices[valid_indices > 0 &
-                                     valid_indices <= nrow(best_links)]
 check_reciprocal <- function(best_links, side) {
   # find the best link of the best links
-  bl <- best_links[valid_indices, , drop = FALSE]
+  bl <- best_links[best_links[, side], , drop = FALSE]
   # we check both ends to see whether the best link is reciprocal
   is_best_link <- bl == seq_len(nrow(bl))
   # if we have a match on either of the sides, we keep the link
