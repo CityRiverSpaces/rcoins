@@ -200,24 +200,27 @@ get_best_link <- function(angles, links, angle_threshold = 0) {
 #' @noRd
 check_reciprocal <- function(best_links, side) {
   # find the best link of the best links
-  bl <- best_links[best_links[, side], , drop = FALSE]
+  bl <- best_links[best_links[, side], ]
   # we check both ends to see whether the best link is reciprocal
   is_best_link <- bl == seq_len(nrow(bl))
   # if we have a match on either of the sides, we keep the link
   is_reciprocal <- apply(is_best_link, 1, any)
   # fix for NA values
   is_reciprocal[is.na(is_reciprocal)] <- FALSE
-
-  return(best_links[is_reciprocal, side])
+  
+  return(is_reciprocal)
 }
 
 #' @noRd
 cross_check_links <- function(best_links, flow_mode = FALSE) {
   links <- array(integer(), dim = dim(best_links))
   colnames(links) <- c("start", "end")
-    
-  links[, "start"] <- check_reciprocal(best_links, "start")
-  links[, "end"] <- check_reciprocal(best_links, "end")
+
+  is_start_reciprocal <- check_reciprocal(best_links, "start")
+  links[is_start_reciprocal, "start"] <- best_links[is_start_reciprocal, "start"]
+
+  is_end_reciprocal <- check_reciprocal(best_links, "end")
+  links[is_end_reciprocal, "end"] <- best_links[is_end_reciprocal, "end"]
   
   return(links)
 }
