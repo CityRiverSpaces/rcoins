@@ -43,6 +43,9 @@ stroke <- function(edges, angle_threshold = 0, attributes = FALSE,
 
   # extract CRS from the edges
   crs <- sf::st_crs(edges_sfc)
+  
+  # convert angle threshold to radians
+  angle_threshold_rad <- angle_threshold / 180 * pi
 
   # split the edges into their constituent points
   edge_pts <- sfheaders::sfc_to_df(edges_sfc)
@@ -57,7 +60,7 @@ stroke <- function(edges, angle_threshold = 0, attributes = FALSE,
   links <- get_links(segments)
 
   # calculate interior angles between segment pairs, identify best links
-  best_links <- best_link(nodes, segments, links, angle_threshold)
+  best_links <- best_link(nodes, segments, links, angle_threshold_rad)
 
   # verify that the best links identified fulfill input requirements
   final_links <- cross_check_links(best_links, flow_mode)
@@ -135,8 +138,6 @@ best_link <- function(nodes, segments, links, angle_threshold = 0) {
 
   best_links <- array(integer(), dim = dim(segments))
   colnames(best_links) <- c("start", "end")
-
-  angle_threshold_rad <- angle_threshold / 180 * pi  # convert to radians
 
   for (iseg in seq_len(nrow(segments))) {
     start_node <- segments[iseg, "start"]
