@@ -132,21 +132,21 @@ get_linked_nodes <- function(node_id, segment_id, segments) {
 best_link <- function(nodes, segments, links, angle_threshold = 0) {
   # convert nodes to a matrix for faster indexing
   nodes <- as.matrix(nodes[c("x", "y")])
-    
+
   best_links <- array(integer(), dim = dim(segments))
   colnames(best_links) <- c("start", "end")
-  
+
   angle_threshold_rad <- angle_threshold / 180 * pi  # convert to radians
-  
+
   for (iseg in seq_len(nrow(segments))) {
     start_node <- segments[iseg, "start"]
     end_node <- segments[iseg, "end"]
-    
+
     best_link_start <- find_best_link(start_node, end_node, 
                                       iseg, segments, links)
     if (length(best_link_start) > 0)
         best_links[iseg, "start"] <- best_link_start
-    
+
     best_link_end <- find_best_link(end_node, start_node, 
                                     iseg, segments, links)
     if (length(best_link_end) > 0)
