@@ -43,7 +43,7 @@ stroke <- function(edges, angle_threshold = 0, attributes = FALSE,
 
   # extract CRS from the edges
   crs <- sf::st_crs(edges_sfc)
-  
+
   # convert angle threshold to radians
   angle_threshold_rad <- angle_threshold / 180 * pi
 
@@ -143,29 +143,29 @@ best_link <- function(nodes, segments, links, angle_threshold = 0) {
     start_node <- segments[iseg, "start"]
     end_node <- segments[iseg, "end"]
 
-    best_link_start <- find_best_link(start_node, end_node, 
-                                      iseg, segments, links, 
+    best_link_start <- find_best_link(start_node, end_node,
+                                      iseg, segments, links,
                                       nodes, angle_threshold)
     if (length(best_link_start) > 0)
-        best_links[iseg, "start"] <- best_link_start
+      best_links[iseg, "start"] <- best_link_start
 
-    best_link_end <- find_best_link(end_node, start_node, 
-                                    iseg, segments, links, 
+    best_link_end <- find_best_link(end_node, start_node,
+                                    iseg, segments, links,
                                     nodes, angle_threshold)
     if (length(best_link_end) > 0)
-        best_links[iseg, "end"] <- best_link_end
+      best_links[iseg, "end"] <- best_link_end
   }
   return(best_links)
 }
 
 #' @noRd
 find_best_link <- function(node, opposite_node,
-                           current_segment, segments, links, 
+                           current_segment, segments, links,
                            nodes, angle_threshold) {
   linked_segs <- get_linked_segments(current_segment, node, links)
   linked_nodes <- get_linked_nodes(node, linked_segs, segments)
-  angles <- interior_angle(nodes[node, ], 
-                           nodes[opposite_node, , drop = FALSE], 
+  angles <- interior_angle(nodes[node, ],
+                           nodes[opposite_node, , drop = FALSE],
                            nodes[linked_nodes, , drop = FALSE])
   best_link <- get_best_link(angles, linked_segs, angle_threshold)
   return(best_link)
@@ -207,7 +207,7 @@ check_reciprocal <- function(best_links, side) {
   is_reciprocal <- apply(is_best_link, 1, any)
   # fix for NA values
   is_reciprocal[is.na(is_reciprocal)] <- FALSE
-  
+
   return(is_reciprocal)
 }
 
@@ -217,11 +217,13 @@ cross_check_links <- function(best_links, flow_mode = FALSE) {
   colnames(links) <- c("start", "end")
 
   is_start_reciprocal <- check_reciprocal(best_links, "start")
-  links[is_start_reciprocal, "start"] <- best_links[is_start_reciprocal, "start"]
+  links[is_start_reciprocal, "start"] <-
+    best_links[is_start_reciprocal, "start"]
 
   is_end_reciprocal <- check_reciprocal(best_links, "end")
-  links[is_end_reciprocal, "end"] <- best_links[is_end_reciprocal, "end"]
-  
+  links[is_end_reciprocal, "end"] <-
+    best_links[is_end_reciprocal, "end"]
+
   return(links)
 }
 
