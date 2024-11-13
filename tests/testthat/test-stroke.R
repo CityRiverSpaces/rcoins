@@ -133,7 +133,7 @@ test_that("strokes can be formed starting from a given edge", {
   l1 <- sf::st_linestring(c(p1, p2, p3))
   sfc <- sf::st_sfc(l1, l4, l7)
   expected <- sf::st_sfc(sf::st_linestring(c(p1, p2, p5, p6)))
-  actual <- stroke(sfc, flow_mode = FALSE, from_edge = 3)
+  actual <- stroke(sfc, flow_mode = FALSE, from_edge = list(3))
   expect_setequal(actual, expected)
 })
 

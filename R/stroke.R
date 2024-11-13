@@ -36,7 +36,7 @@ stroke <- function(edges, angle_threshold = 0, attributes = FALSE,
 
   if (attributes) stop("attribute mode not implemented.")
   if (flow_mode) stop("flow mode not implemented.")
-  if (!is.null(from_edge)) stop("from_edge mode not implemented")
+  # if (!is.null(from_edge)) stop("from_edge mode not implemented")
 
   edges_sfc <- to_sfc(edges)
   check_geometry(edges_sfc)
@@ -86,11 +86,12 @@ to_line_segments <- function(points, nodes) {
   # use the attribute `linestring_id` to identify edge start- and end-points
   is_startpoint <- !duplicated(points$linestring_id)
   is_endpoint <- !duplicated(points$linestring_id, fromLast = TRUE)
-  # we build the array of line segments, with shape (nsegements, 2)
+  # we build the array of line segments, with shape (nsegements, 3)
   # values are the node IDs
   start <- points[!is_endpoint, "node_id"]
   end <- points[!is_startpoint, "node_id"]
-  segments <- cbind(start, end)
+  edge_id <- points[!is_endpoint, "linestring_id"]
+  segments <- cbind(start, end, edge_id)
   return(segments)
 }
 
@@ -134,7 +135,8 @@ best_link <- function(nodes, segments, links, angle_threshold = 0) {
   # convert nodes to a matrix for faster indexing
   nodes <- as.matrix(nodes[c("x", "y")])
 
-  best_links <- array(integer(), dim = dim(segments))
+  dim_best_links <- c(nrow(segments), 2)
+  best_links <- array(integer(), dim = dim_best_links)
   colnames(best_links) <- c("start", "end")
 
   angle_threshold_rad <- angle_threshold / 180 * pi  # convert to radians
@@ -243,10 +245,34 @@ to_linestring <- function(node_id, nodes) {
 }
 
 #' @noRd
-merge_lines  <- function(nodes, segments, links, from_edge = NULL) {
-
+merge_lines <- function(nodes, segments, links, from_edge = NULL) {
   is_segment_used <- array(FALSE, dim = nrow(segments))
   strokes <- sf::st_sfc()
+
+  # Process from_edge if provided
+  if (!is.null(from_edge)) {
+    if (is.list(from_edge)) {
+      for (edge in from_edge) {
+        if (inherits(edge, "sf")) {
+          # Convert sf::st_linestring to edge IDs
+          edge_ids <- which(sapply(1:nrow(segments), function(i) {
+            all(sf::st_coordinates(segments[i, ]) == sf::st_coordinates(edge))
+          }))
+          if (length(edge_ids) > 0) {
+            segment_ids <- which(segments$edge_id %in% edge_ids)
+            is_segment_used[segment_ids] <- TRUE
+          }
+        } else if (is.numeric(edge)) {
+          # Map edge IDs to segment IDs and mark them as used
+          segment_ids <- which(sapply(1:nrow(segments), function(i) {
+            segments[i, "edge_id"] == edge
+          }))
+          # Mark edge IDs as used
+          is_segment_used[segment_ids] <- TRUE
+        }
+      }
+    }
+  }
 
   for (iseg in seq_len(nrow(segments))) {
     if (is_segment_used[iseg]) next
@@ -255,7 +281,7 @@ merge_lines  <- function(nodes, segments, links, from_edge = NULL) {
 
     is_segment_used[iseg] <- TRUE
 
-    node  <- segments[iseg, "start"]
+    node <- segments[iseg, "start"]
     link <- links[iseg, "start"]
     segment <- iseg
     while (TRUE) {
@@ -268,7 +294,7 @@ merge_lines  <- function(nodes, segments, links, from_edge = NULL) {
       link <- new
     }
 
-    node  <- segments[iseg, "end"]
+    node <- segments[iseg, "end"]
     link <- links[iseg, "end"]
     segment <- iseg
     while (TRUE) {
