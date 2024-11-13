@@ -249,8 +249,11 @@ merge_lines <- function(nodes, segments, links, from_edge = NULL) {
   is_segment_used <- array(FALSE, dim = nrow(segments))
   strokes <- sf::st_sfc()
 
+  all_segments <- seq_len(nrow(segments))
+
   # Process from_edge if provided
   if (!is.null(from_edge)) {
+    all_segments <- c()
     if (is.list(from_edge)) {
       for (edge in from_edge) {
         if (inherits(edge, "sf")) {
@@ -260,21 +263,22 @@ merge_lines <- function(nodes, segments, links, from_edge = NULL) {
           }))
           if (length(edge_ids) > 0) {
             segment_ids <- which(segments$edge_id %in% edge_ids)
-            is_segment_used[segment_ids] <- TRUE
           }
         } else if (is.numeric(edge)) {
           # Map edge IDs to segment IDs and mark them as used
           segment_ids <- which(sapply(1:nrow(segments), function(i) {
             segments[i, "edge_id"] == edge
           }))
-          # Mark edge IDs as used
-          is_segment_used[segment_ids] <- TRUE
         }
+        all_segments <- c(all_segments, segment_ids)
       }
+    }
+    else {
+      stop("from_edge must be a list of sf objects or edge IDs")
     }
   }
 
-  for (iseg in seq_len(nrow(segments))) {
+  for (iseg in all_segments) {
     if (is_segment_used[iseg]) next
 
     stroke <- segments[iseg, 1:2]
@@ -284,6 +288,7 @@ merge_lines <- function(nodes, segments, links, from_edge = NULL) {
     node <- segments[iseg, "start"]
     link <- links[iseg, "start"]
     segment <- iseg
+
     while (TRUE) {
       if (is.na(link) || is_segment_used[link]) break
       node <- get_next_node(node, link, segments)
@@ -306,6 +311,7 @@ merge_lines <- function(nodes, segments, links, from_edge = NULL) {
       segment <- link
       link <- new
     }
+
     strokes <- c(strokes, to_linestring(stroke, nodes))
   }
   return(strokes)
