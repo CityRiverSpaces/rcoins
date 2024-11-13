@@ -29,3 +29,9 @@ library(rcoins)
 ## basic example code
 ```
 
+### Install in development mode locally
+
+``` r
+library(usethis)
+library(devtools)
+load_all("/path/to/the/rcoins/package")
