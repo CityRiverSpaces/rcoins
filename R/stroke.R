@@ -98,7 +98,7 @@ to_line_segments <- function(points, nodes) {
 #' @noRd
 get_links <- function(segments) {
   nsegments <- nrow(segments)
-  links <- data.frame(node_id = as.vector(segments)) |>
+  links <- data.frame(node_id = as.vector(segments[, 1:2])) |>
     dplyr::group_by(node_id) |>
     dplyr::group_rows()  |>
     lapply(function(x) (x - 1) %% nsegments + 1)
@@ -120,7 +120,7 @@ get_linked_segments <- function(segment_id, node_id, links) {
 get_linked_nodes <- function(node_id, segment_id, segments) {
   # find the node connected to the given one via the given segment(s)
   # 1. get the nodes that are part of the given segment(s)
-  nds <- segments[segment_id, ]
+  nds <- segments[segment_id, 1:2]
   # 2. flatten the array row by row (i.e. along the node dimension)
   nds <- as.vector(t(nds))
   # 3. exclude the given node from the list
@@ -221,7 +221,7 @@ cross_check_links <- function(best_links, flow_mode = FALSE) {
 get_next_node <- function(node, segment, segments) {
   # find the node connected to the given one via the given segment
   # 1. get the nodes that are part of the given segment
-  nodes <- segments[segment, ]
+  nodes <- segments[segment, 1:2]
   # 2. exclude the given node from the list
   is_current <- nodes == node
   return(nodes[!is_current])
@@ -277,7 +277,7 @@ merge_lines <- function(nodes, segments, links, from_edge = NULL) {
   for (iseg in seq_len(nrow(segments))) {
     if (is_segment_used[iseg]) next
 
-    stroke <- segments[iseg, ]
+    stroke <- segments[iseg, 1:2]
 
     is_segment_used[iseg] <- TRUE
 
