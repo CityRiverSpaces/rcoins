@@ -245,40 +245,46 @@ to_linestring <- function(node_id, nodes) {
 }
 
 #' @noRd
+map_edge_to_segment <- function(from_edge, segments) {
+  all_segments_id <- c()
+  for (edge in from_edge) {
+    if (inherits(edge, "sf")) {
+      # Convert sf::st_linestring to edge IDs
+      edge_ids <- which(sapply(1:nrow(segments), function(i) {
+        all(sf::st_coordinates(segments[i, ]) == sf::st_coordinates(edge))
+      }))
+      if (length(edge_ids) > 0) {
+        segment_ids <- which(segments$edge_id %in% edge_ids)
+      }
+    } else if (is.numeric(edge)) {
+      # Map edge IDs to segment IDs and mark them as used
+      segment_ids <- which(sapply(1:nrow(segments), function(i) {
+        segments[i, "edge_id"] == edge
+      }))
+    }
+    all_segments_id <- c(all_segments_id, segment_ids)
+  }
+  return(all_segments_id)
+}
+
+#' @noRd
 merge_lines <- function(nodes, segments, links, from_edge = NULL) {
   is_segment_used <- array(FALSE, dim = nrow(segments))
   strokes <- sf::st_sfc()
 
-  all_segments <- seq_len(nrow(segments))
+  all_segments_id <- seq_len(nrow(segments))
 
   # Process from_edge if provided
   if (!is.null(from_edge)) {
-    all_segments <- c()
     if (is.list(from_edge)) {
-      for (edge in from_edge) {
-        if (inherits(edge, "sf")) {
-          # Convert sf::st_linestring to edge IDs
-          edge_ids <- which(sapply(1:nrow(segments), function(i) {
-            all(sf::st_coordinates(segments[i, ]) == sf::st_coordinates(edge))
-          }))
-          if (length(edge_ids) > 0) {
-            segment_ids <- which(segments$edge_id %in% edge_ids)
-          }
-        } else if (is.numeric(edge)) {
-          # Map edge IDs to segment IDs and mark them as used
-          segment_ids <- which(sapply(1:nrow(segments), function(i) {
-            segments[i, "edge_id"] == edge
-          }))
-        }
-        all_segments <- c(all_segments, segment_ids)
-      }
+      all_segments_id <- map_edge_to_segment(from_edge, segments)
     }
     else {
       stop("from_edge must be a list of sf objects or edge IDs")
     }
   }
 
-  for (iseg in all_segments) {
+  for (iseg in all_segments_id) {
     if (is_segment_used[iseg]) next
 
     stroke <- segments[iseg, 1:2]
