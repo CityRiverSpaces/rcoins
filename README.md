@@ -29,9 +29,16 @@ library(rcoins)
 ## basic example code
 ```
 
-### Install in development mode locally
+### Load the package in development mode locally
 
 ``` r
 library(usethis)
 library(devtools)
 load_all("/path/to/the/rcoins/package")
+```
+
+### Run the linter locally
+
+``` r
+lintr::lint("/path/to/R/stroke.R")
+```
