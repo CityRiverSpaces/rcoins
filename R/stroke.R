@@ -36,7 +36,6 @@ stroke <- function(edges, angle_threshold = 0, attributes = FALSE,
 
   if (attributes) stop("attribute mode not implemented.")
   if (flow_mode) stop("flow mode not implemented.")
-  # if (!is.null(from_edge)) stop("from_edge mode not implemented")
 
   edges_sfc <- to_sfc(edges)
   check_geometry(edges_sfc)
@@ -61,6 +60,13 @@ stroke <- function(edges, angle_threshold = 0, attributes = FALSE,
 
   # verify that the best links identified fulfill input requirements
   final_links <- cross_check_links(best_links, flow_mode)
+
+  # if we are looking for strokes starting from a specific edge, we use
+  # `best_links`
+  if (!is.null(from_edge)) {
+    if (!is.list(from_edge)) stop("from_edge must be a list of edge IDs")
+    final_links <- best_links
+  }
 
   # merge line segments into strokes following the predetermined connectivity
   strokes  <- merge_lines(nodes, segments, final_links, from_edge)
@@ -221,7 +227,7 @@ cross_check_links <- function(best_links, flow_mode = FALSE) {
 get_next_node <- function(node, segment, segments) {
   # find the node connected to the given one via the given segment
   # 1. get the nodes that are part of the given segment
-  nodes <- segments[segment, 1:2]
+  nodes <- segments[segment, ]
   # 2. exclude the given node from the list
   is_current <- nodes == node
   return(nodes[!is_current])
@@ -257,7 +263,7 @@ map_edge_to_segment <- function(from_edge, segments) {
         segment_ids <- which(segments$edge_id %in% edge_ids)
       }
     } else if (is.numeric(edge)) {
-      # Map edge IDs to segment IDs and mark them as used
+      # Map edge IDs to segment IDs
       segment_ids <- which(sapply(1:nrow(segments), function(i) {
         segments[i, "edge_id"] == edge
       }))
@@ -271,17 +277,11 @@ map_edge_to_segment <- function(from_edge, segments) {
 merge_lines <- function(nodes, segments, links, from_edge = NULL) {
   is_segment_used <- array(FALSE, dim = nrow(segments))
   strokes <- sf::st_sfc()
-
   all_segments_id <- seq_len(nrow(segments))
 
   # Process from_edge if provided
   if (!is.null(from_edge)) {
-    if (is.list(from_edge)) {
-      all_segments_id <- map_edge_to_segment(from_edge, segments)
-    }
-    else {
-      stop("from_edge must be a list of sf objects or edge IDs")
-    }
+    all_segments_id <- map_edge_to_segment(from_edge, segments)
   }
 
   for (iseg in all_segments_id) {
@@ -297,10 +297,10 @@ merge_lines <- function(nodes, segments, links, from_edge = NULL) {
 
     while (TRUE) {
       if (is.na(link) || is_segment_used[link]) break
-      node <- get_next_node(node, link, segments)
+      node <- get_next_node(node, link, segments[, "start", drop = FALSE])
       stroke <- c(node, stroke)
       is_segment_used[link] <- TRUE
-      new <- get_next_segment(segment, link, links)
+      new <- get_next_segment(segment, link, links[, "start", drop = FALSE])
       segment <- link
       link <- new
     }
@@ -310,10 +310,10 @@ merge_lines <- function(nodes, segments, links, from_edge = NULL) {
     segment <- iseg
     while (TRUE) {
       if (is.na(link) || is_segment_used[link]) break
-      node <- get_next_node(node, link, segments)
+      node <- get_next_node(node, link, segments[, "end", drop = FALSE])
       stroke <- c(stroke, node)
       is_segment_used[link] <- TRUE
-      new <- get_next_segment(segment, link, links)
+      new <- get_next_segment(segment, link, links[, "end", drop = FALSE])
       segment <- link
       link <- new
     }
