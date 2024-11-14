@@ -227,7 +227,7 @@ cross_check_links <- function(best_links, flow_mode = FALSE) {
 get_next_node <- function(node, segment, segments) {
   # find the node connected to the given one via the given segment
   # 1. get the nodes that are part of the given segment
-  nodes <- segments[segment, ]
+  nodes <- segments[segment, 1:2]
   # 2. exclude the given node from the list
   is_current <- nodes == node
   return(nodes[!is_current])
@@ -240,7 +240,12 @@ get_next_segment <- function(segment, link, links) {
   segments <- links[link, ]
   #  2. exclude the given segment from the list
   is_current <- segments == segment
-  return(segments[!is_current])
+  next_segment <- segments[!is_current]
+  # next_segment should be a single element but it is not always the case
+  if (length(next_segment) != 1) {
+    next_segment <- NA
+  }
+  return(next_segment)
 }
 
 #' @noRd
@@ -297,10 +302,10 @@ merge_lines <- function(nodes, segments, links, from_edge = NULL) {
 
     while (TRUE) {
       if (is.na(link) || is_segment_used[link]) break
-      node <- get_next_node(node, link, segments[, "start", drop = FALSE])
+      node <- get_next_node(node, link, segments)
       stroke <- c(node, stroke)
       is_segment_used[link] <- TRUE
-      new <- get_next_segment(segment, link, links[, "start", drop = FALSE])
+      new <- get_next_segment(segment, link, links)
       segment <- link
       link <- new
     }
@@ -310,10 +315,10 @@ merge_lines <- function(nodes, segments, links, from_edge = NULL) {
     segment <- iseg
     while (TRUE) {
       if (is.na(link) || is_segment_used[link]) break
-      node <- get_next_node(node, link, segments[, "end", drop = FALSE])
+      node <- get_next_node(node, link, segments)
       stroke <- c(stroke, node)
       is_segment_used[link] <- TRUE
-      new <- get_next_segment(segment, link, links[, "end", drop = FALSE])
+      new <- get_next_segment(segment, link, links)
       segment <- link
       link <- new
     }
