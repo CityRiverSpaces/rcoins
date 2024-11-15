@@ -264,19 +264,13 @@ to_linestring <- function(node_id, nodes) {
 map_edge_to_segment <- function(from_edge, segments) {
   all_segments_id <- c()
   for (edge in from_edge) {
-    if (inherits(edge, "sf")) {
-      # Convert sf::st_linestring to edge IDs
-      edge_ids <- which(sapply(1:nrow(segments), function(i) {
-        all(sf::st_coordinates(segments[i, ]) == sf::st_coordinates(edge))
-      }))
-      if (length(edge_ids) > 0) {
-        segment_ids <- which(segments$edge_id %in% edge_ids)
-      }
-    } else if (is.numeric(edge)) {
+    if (is.numeric(edge)) {
       # Map edge IDs to segment IDs
-      segment_ids <- which(sapply(1:nrow(segments), function(i) {
+      segment_ids <- which(sapply(seq_len(nrow(segments)), function(i) {
         segments[i, "edge_id"] == edge
       }))
+    } else {
+      stop("from_edge must be a list of edge IDs")
     }
     all_segments_id <- c(all_segments_id, segment_ids)
   }
