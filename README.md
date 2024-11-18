@@ -42,3 +42,10 @@ load_all()
 library(lintr)
 lint_package()
 ```
+
+### Run the tests locally
+
+``` r
+library(testthat)
+test()
+```
