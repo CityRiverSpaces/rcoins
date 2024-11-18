@@ -300,8 +300,7 @@ merge_lines <- function(nodes, segments, links, from_edge = NULL) {
     segment <- iseg
 
     while (TRUE) {
-      # this is becuase segments can be repeated in the strokes when using
-      # from_edge
+      # one segment can appear in multiple strokes when using from_edge
       if (is.null(from_edge)) {
         if (is.na(link) || is_segment_used[link]) break
       } else {
