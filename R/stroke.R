@@ -36,11 +36,8 @@ stroke <- function(edges, angle_threshold = 0, attributes = FALSE,
 
   if (attributes) stop("attribute mode not implemented.")
   if (flow_mode) stop("flow mode not implemented.")
-  if (!is.null(from_edge)) {
-    if (!is.list(from_edge)) stop("from_edge must be a list of edge IDs")
-    if (attributes || flow_mode) {
-      stop("from_edge is not compatible with attributes or flow_mode")
-    }
+  if (!is.null(from_edge) && (attributes || flow_mode)) {
+    stop("from_edge is not compatible with attributes or flow_mode")
   }
 
   edges_sfc <- to_sfc(edges)
@@ -64,12 +61,12 @@ stroke <- function(edges, angle_threshold = 0, attributes = FALSE,
   # calculate interior angles between segment pairs, identify best links
   best_links <- best_link(nodes, segments, links, angle_threshold)
 
-  # verify that the best links identified fulfill input requirements
-  final_links <- cross_check_links(best_links, flow_mode)
-
   # if we are looking for strokes starting from a specific edge, we use
   # `best_links`
-  if (!is.null(from_edge)) {
+  if (is.null(from_edge)) {
+    # verify that the best links identified fulfill input requirements
+    final_links <- cross_check_links(best_links, flow_mode)
+  } else {
     final_links <- best_links
   }
 
@@ -316,13 +313,9 @@ merge_lines <- function(nodes, segments, links, from_edge = NULL) {
     segment <- iseg
 
     while (TRUE) {
-      # this is becuase segments can be repeated in the strokes when using
-      # from_edge
-      if (is.null(from_edge)) {
-        if (is.na(link) || is_segment_used[link]) break
-      } else {
-        if (is.na(link)) break
-      }
+      # one segment can appear in multiple strokes when using from_edge
+      if (is.na(link) || (is_segment_used[link] && is.null(from_edge))) break
+
       node <- get_next_node(node, link, segments)
       stroke <- c(stroke, node)
       is_segment_used[link] <- TRUE
