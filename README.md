@@ -32,9 +32,8 @@ library(rcoins)
 ### Load the package in development mode locally
 
 ``` r
-library(usethis)
 library(devtools)
-load_all("/path/to/the/rcoins/package")
+load_all()
 ```
 
 ### Run the linter locally
