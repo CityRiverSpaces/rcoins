@@ -40,5 +40,6 @@ load_all("/path/to/the/rcoins/package")
 ### Run the linter locally
 
 ``` r
-lintr::lint("/path/to/R/stroke.R")
+library(lintr)
+lint_package()
 ```
