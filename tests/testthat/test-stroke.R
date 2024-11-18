@@ -149,6 +149,18 @@ test_that("strokes can be formed starting from a given a list of edge ids", {
   expect_setequal(actual, expected)
 })
 
+test_that("same strokes can be formed when one of the edges is reversed", {
+  new_l1 <- sf::st_linestring(c(p1, p2, p3))
+  # reverse one of the edges
+  new_l4 <- sf::st_linestring(c(p5, p2))
+  sfc <- sf::st_sfc(new_l1, new_l4, l7)
+  stroke_1 <- sf::st_linestring(c(p1, p2, p3))
+  stroke_2 <- sf::st_linestring(c(p6, p5, p2, p1))
+  expected <- sf::st_sfc(stroke_1, stroke_2)
+  actual <- stroke(sfc, flow_mode = FALSE, from_edge = list(1, 2))
+  expect_setequal(actual, expected)
+})
+
 test_that("attributes can be returned if edge is specified in flow mode", {
   skip(message = "flow mode to be implemented")
   sfc <- sf::st_sfc(l1, l2, l5, l7)
