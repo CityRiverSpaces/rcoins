@@ -53,7 +53,9 @@ stroke <- function(edges, angle_threshold = 0, attributes = FALSE,
   nodes <- unique_nodes(edge_pts)
 
   # build array of line segments, referring to points using their IDs
-  segments <- to_line_segments(edge_pts, nodes)
+  line_segments <- to_line_segments(edge_pts, nodes)
+  segments <- line_segments$segments
+  edge_ids <- line_segments$edge_id
 
   # build connectivity table: for each node, find intersecting line segments
   links <- get_links(segments)
@@ -61,17 +63,22 @@ stroke <- function(edges, angle_threshold = 0, attributes = FALSE,
   # calculate interior angles between segment pairs, identify best links
   best_links <- best_link(nodes, segments, links, angle_threshold)
 
-  # if we are looking for strokes starting from a specific edge, we use
-  # `best_links`
   if (is.null(from_edge)) {
     # verify that the best links identified fulfill input requirements
     final_links <- cross_check_links(best_links, flow_mode)
+    segments_ids <- seq_len(nrow(segments))
+
   } else {
+    # map edge IDs to segment IDs
+    segments_ids <- which(edge_ids %in% from_edge)
+
+    # if we are looking for strokes starting from a specific edge, we use
+    # `best_links`
     final_links <- best_links
   }
 
   # merge line segments into strokes following the predetermined connectivity
-  strokes  <- merge_lines(nodes, segments, final_links, from_edge)
+  strokes  <- merge_lines(nodes, segments, final_links, segments_ids, from_edge)
 
   # add the CRS to the edges, done!
   sf::st_crs(strokes) <- crs
@@ -94,13 +101,13 @@ to_line_segments <- function(points, nodes) {
   # use the attribute `linestring_id` to identify edge start- and end-points
   is_startpoint <- !duplicated(points$linestring_id)
   is_endpoint <- !duplicated(points$linestring_id, fromLast = TRUE)
-  # we build the array of line segments, with shape (nsegements, 3)
+  # we build the array of line segments, with shape (nsegements, 2)
   # values are the node IDs
   start <- points[!is_endpoint, "node_id"]
   end <- points[!is_startpoint, "node_id"]
-  edge_id <- points[!is_endpoint, "linestring_id"]
-  segments <- cbind(start, end, edge_id)
-  return(segments)
+  edge_ids <- points[!is_endpoint, "linestring_id"]
+  segments <- cbind(start, end)
+  return(list(segments = segments, edge_ids = edge_ids))
 }
 
 #' @noRd
@@ -258,34 +265,13 @@ to_linestring <- function(node_id, nodes) {
 }
 
 #' @noRd
-map_edge_to_segment <- function(from_edge, segments) {
-  all_segments_id <- c()
-  for (edge in from_edge) {
-    if (is.numeric(edge)) {
-      # Map edge IDs to segment IDs
-      segment_ids <- which(sapply(seq_len(nrow(segments)), function(i) {
-        segments[i, "edge_id"] == edge
-      }))
-    } else {
-      stop("from_edge must be a list of edge IDs")
-    }
-    all_segments_id <- c(all_segments_id, segment_ids)
-  }
-  return(all_segments_id)
-}
-
-#' @noRd
-merge_lines <- function(nodes, segments, links, from_edge = NULL) {
+merge_lines <- function(
+  nodes, segments, links, segments_ids, from_edge = NULL
+) {
   is_segment_used <- array(FALSE, dim = nrow(segments))
   strokes <- sf::st_sfc()
-  all_segments_id <- seq_len(nrow(segments))
 
-  # Process from_edge if provided
-  if (!is.null(from_edge)) {
-    all_segments_id <- map_edge_to_segment(from_edge, segments)
-  }
-
-  for (iseg in all_segments_id) {
+  for (iseg in segments_ids) {
     if (is_segment_used[iseg]) next
 
     stroke <- segments[iseg, 1:2]
