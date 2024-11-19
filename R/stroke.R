@@ -186,10 +186,10 @@ interior_angle <- function(v, p1, p2) {
   # compute convex angle between three points:
   # p1--v--p2 ("v" is the vertex)
   # NOTE: multiple points are supported as p1 and p2
-  dx1 <- p1[, "x"] - v["x"]
-  dx2 <- p2[, "x"] - v["x"]
-  dy1 <- p1[, "y"] - v["y"]
-  dy2 <- p2[, "y"] - v["y"]
+  dx1 <- p1[, "x"] - v[["x"]]
+  dx2 <- p2[, "x"] - v[["x"]]
+  dy1 <- p1[, "y"] - v[["y"]]
+  dy2 <- p2[, "y"] - v[["y"]]
   dot_product <- dx1 * dx2 + dy1 * dy2
   norm1 <- sqrt(dx1^2 + dy1^2)
   norm2 <- sqrt(dx2^2 + dy2^2)
@@ -202,8 +202,9 @@ interior_angle <- function(v, p1, p2) {
 get_best_link <- function(angles, links, angle_threshold = 0) {
   if (length(angles) == 0) return(NA)
   is_above_threshold <- angles > angle_threshold
+  idx_above_threshold <- which(is_above_threshold)
   is_best_link <- which.max(angles[is_above_threshold])
-  best_link <- links[is_best_link]
+  best_link <- links[idx_above_threshold[is_best_link]]
   return(best_link)
 }
 
