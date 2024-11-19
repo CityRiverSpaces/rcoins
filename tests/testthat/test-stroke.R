@@ -111,8 +111,8 @@ test_that("attributes cannot be returned if not in flow mode", {
 })
 
 test_that("edges can be split if flow_mode is false", {
-  l1 <- sf::st_linestring(c(p1, p2, p5))
-  sfc <- sf::st_sfc(l1, l2)
+  new_l1 <- sf::st_linestring(c(p1, p2, p5))
+  sfc <- sf::st_sfc(new_l1, l2)
   expected <- sf::st_sfc(sf::st_linestring(c(p1, p2, p3)),
                          sf::st_linestring(c(p2, p5)))
   actual <- stroke(sfc, flow_mode = FALSE)
@@ -120,9 +120,8 @@ test_that("edges can be split if flow_mode is false", {
 })
 
 test_that("edges are not split if flow_mode is true", {
-  skip(message = "flow mode to be implemented")
-  l1 <- sf::st_linestring(c(p1, p2, p5))
-  sfc <- sf::st_sfc(l1, l2)
+  new_l1 <- sf::st_linestring(c(p1, p2, p5))
+  sfc <- sf::st_sfc(new_l1, l2)
   expected <- sfc
   actual <- stroke(sfc, flow_mode = TRUE)
   expect_setequal(actual, expected)
