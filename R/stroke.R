@@ -150,8 +150,7 @@ best_link <- function(nodes, segments, links, angle_threshold = 0) {
   # convert nodes to a matrix for faster indexing
   nodes <- as.matrix(nodes[c("x", "y")])
 
-  dim_best_links <- c(nrow(segments), 2)
-  best_links <- array(integer(), dim = dim_best_links)
+  best_links <- array(integer(), dim = dim(segments))
   colnames(best_links) <- c("start", "end")
 
   angle_threshold_rad <- angle_threshold / 180 * pi  # convert to radians
