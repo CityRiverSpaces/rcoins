@@ -113,7 +113,7 @@ to_line_segments <- function(points, nodes) {
 #' @noRd
 get_links <- function(segments) {
   nsegments <- nrow(segments)
-  links <- data.frame(node_id = as.vector(segments[, 1:2])) |>
+  links <- data.frame(node_id = as.vector(segments)) |>
     dplyr::group_by(node_id) |>
     dplyr::group_rows()  |>
     lapply(function(x) (x - 1) %% nsegments + 1)
@@ -135,7 +135,7 @@ get_linked_segments <- function(segment_id, node_id, links) {
 get_linked_nodes <- function(node_id, segment_id, segments) {
   # find the node connected to the given one via the given segment(s)
   # 1. get the nodes that are part of the given segment(s)
-  nds <- segments[segment_id, 1:2]
+  nds <- segments[segment_id, ]
   # 2. flatten the array row by row (i.e. along the node dimension)
   nds <- as.vector(t(nds))
   # 3. exclude the given node from the list
@@ -233,28 +233,17 @@ cross_check_links <- function(best_links, flow_mode = FALSE) {
 }
 
 #' @noRd
-get_next_node <- function(node, segment, segments) {
-  # find the node connected to the given one via the given segment
-  # 1. get the nodes that are part of the given segment
-  nodes <- segments[segment, 1:2]
-  # 2. exclude the given node from the list
+get_next <- function(node, link, segments, links) {
+  # find the node and segment connected to the current ones via the given link
+  # 1. get the nodes and segments connected to the given link
+  nodes <- segments[link, ]
+  segs <- links[link, ]
+  # 2. identify the position of the current node in the arrays (the current
+  #    segment will be in the same position
   is_current <- nodes == node
-  return(nodes[!is_current])
-}
-
-#' @noRd
-get_next_segment <- function(segment, link, links) {
-  # find the segment connected to the given one via the given link
-  #  1. get the segments connected to the given link
-  segments <- links[link, ]
-  #  2. exclude the given segment from the list
-  is_current <- segments == segment
-  next_segment <- segments[!is_current]
-  # next_segment should be a single element but it is not always the case
-  if (length(next_segment) != 1) {
-    next_segment <- NA
-  }
-  return(next_segment)
+  # 3. exclude the current node and segment from the respective lists to find
+  #    the new elements
+  return(list(node = nodes[!is_current], link = segs[!is_current]))
 }
 
 #' @noRd
@@ -274,42 +263,35 @@ merge_lines <- function(
   for (iseg in segments_ids) {
     if (is_segment_used[iseg]) next
 
-    stroke <- segments[iseg, 1:2]
+    stroke <- segments[iseg, ]
 
     is_segment_used[iseg] <- TRUE
 
     node <- segments[iseg, "start"]
     link <- links[iseg, "start"]
-    segment <- iseg
 
     while (TRUE) {
       # one segment can appear in multiple strokes when using from_edge
       if (is.na(link) || (is_segment_used[link] && is.null(from_edge))) break
-
-      node <- get_next_node(node, link, segments)
-      stroke <- c(node, stroke)
+      new <- get_next(node, link, segments, links)
       is_segment_used[link] <- TRUE
-      new <- get_next_segment(segment, link, links)
-      segment <- link
-      link <- new
+      node <- new$node
+      link <- new$link
+      stroke <- c(node, stroke)
     }
 
     node <- segments[iseg, "end"]
     link <- links[iseg, "end"]
-    segment <- iseg
 
     while (TRUE) {
       # one segment can appear in multiple strokes when using from_edge
       if (is.na(link) || (is_segment_used[link] && is.null(from_edge))) break
-
-      node <- get_next_node(node, link, segments)
-      stroke <- c(stroke, node)
+      new <- get_next(node, link, segments, links)
       is_segment_used[link] <- TRUE
-      new <- get_next_segment(segment, link, links)
-      segment <- link
-      link <- new
+      node <- new$node
+      link <- new$link
+      stroke <- c(stroke, node)
     }
-
     strokes <- c(strokes, to_linestring(stroke, nodes))
   }
   return(strokes)
