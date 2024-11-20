@@ -122,6 +122,9 @@ test_that("edges can be split if flow_mode is false", {
 test_that("edges are not split if flow_mode is true", {
   new_l1 <- sf::st_linestring(c(p1, p2, p5))
   sfc <- sf::st_sfc(new_l1, l2)
+  # p1 - p2 - p3
+  #         \
+  #           p5
   expected <- sfc
   actual <- stroke(sfc, flow_mode = TRUE)
   expect_setequal(actual, expected)
