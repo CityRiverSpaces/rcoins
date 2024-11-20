@@ -55,3 +55,23 @@ library(rcoins)
 ## basic example code
 ```
 
+### Load the package in development mode locally
+
+``` r
+library(devtools)
+load_all()
+```
+
+### Run the linter locally
+
+``` r
+library(lintr)
+lint_package()
+```
+
+### Run the tests locally
+
+``` r
+library(testthat)
+test()
+```
