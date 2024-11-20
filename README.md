@@ -43,7 +43,7 @@ conda activate rcoins
 Install the development version of rcoins:
 
 ``` shell
-Rscript -e 'devtools::install_github("CityRiverSpaces/rcoins", upgrade = "never")'
+Rscript -e 'devtools::install()'
 ```
 
 ## Example
@@ -55,23 +55,22 @@ library(rcoins)
 ## basic example code
 ```
 
-### Load the package in development mode locally
+## Development
+
+When modifying the R source code, load the library as:
 
 ``` r
-library(devtools)
-load_all()
+devtools::load_all()
 ```
 
-### Run the linter locally
+Run tests locally:
 
 ``` r
-library(lintr)
-lint_package()
+devtools::test()
 ```
 
-### Run the tests locally
+Run the linter locally:
 
 ``` r
-library(testthat)
-test()
+lintr::lint_package()
 ```
