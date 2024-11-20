@@ -12,4 +12,5 @@ dependencies:
 # Suggests
   - r-sfnetworks
   - r-testthat >=3.0.0
-
+# Others
+  - r-lintr
