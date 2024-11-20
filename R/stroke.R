@@ -147,7 +147,7 @@ get_linked_nodes <- function(node_id, segment_id, segments) {
 
 #' @noRd
 best_link <- function(
-  nodes, segments, links, edge_ids, angle_threshold = 0, flow_mode
+  nodes, segments, links, edge_ids, flow_mode, angle_threshold = 0
 ) {
 
   # convert nodes to a matrix for faster indexing
