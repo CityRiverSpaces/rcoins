@@ -35,7 +35,6 @@ stroke <- function(edges, angle_threshold = 0, attributes = FALSE,
   }
 
   if (attributes) stop("attribute mode not implemented.")
-  if (flow_mode) stop("flow mode not implemented.")
   if (!is.null(from_edge) && (attributes || flow_mode)) {
     stop("from_edge is not compatible with attributes or flow_mode")
   }
@@ -61,11 +60,13 @@ stroke <- function(edges, angle_threshold = 0, attributes = FALSE,
   links <- get_links(segments)
 
   # calculate interior angles between segment pairs, identify best links
-  best_links <- best_link(nodes, segments, links, angle_threshold)
+  best_links <- best_link(
+    nodes, segments, links, edge_ids, flow_mode, angle_threshold
+  )
 
   if (is.null(from_edge)) {
     # verify that the best links identified fulfill input requirements
-    final_links <- cross_check_links(best_links, flow_mode)
+    final_links <- cross_check_links(best_links)
     segments_ids <- seq_len(nrow(segments))
 
   } else {
@@ -145,7 +146,9 @@ get_linked_nodes <- function(node_id, segment_id, segments) {
 }
 
 #' @noRd
-best_link <- function(nodes, segments, links, angle_threshold = 0) {
+best_link <- function(
+  nodes, segments, links, edge_ids, flow_mode, angle_threshold = 0
+) {
 
   # convert nodes to a matrix for faster indexing
   nodes <- as.matrix(nodes[c("x", "y")])
@@ -158,23 +161,45 @@ best_link <- function(nodes, segments, links, angle_threshold = 0) {
   for (iseg in seq_len(nrow(segments))) {
     start_node <- segments[iseg, "start"]
     end_node <- segments[iseg, "end"]
+    edge_id <- edge_ids[iseg]
 
     # find angles formed with all segments linked at start point
     linked_segs <- get_linked_segments(iseg, start_node, links)
-    linked_nodes <- get_linked_nodes(start_node, linked_segs, segments)
-    angles <- interior_angle(nodes[start_node, ],
-                             nodes[end_node, , drop = FALSE],
-                             nodes[linked_nodes, , drop = FALSE])
-    best_link <- get_best_link(angles, linked_segs, angle_threshold_rad)
+
+    # if flow_mode, we choose the link on the same edge
+    if (flow_mode) {
+      best_link <- get_link_on_same_edge(linked_segs, edge_ids, edge_id)
+    }
+
+    # if not flow_mode or no link on the same edge, we calculate the angle
+    if (length(best_link) == 0 || !flow_mode) {
+      linked_nodes <- get_linked_nodes(start_node, linked_segs, segments)
+      angles <- interior_angle(nodes[start_node, ],
+                               nodes[end_node, , drop = FALSE],
+                               nodes[linked_nodes, , drop = FALSE])
+      best_link <- get_best_link(angles, linked_segs, angle_threshold_rad)
+    }
+
     if (length(best_link) > 0) best_links[iseg, "start"] <- best_link
 
     # find angles formed with all segments linked at end point
     linked_segs <- get_linked_segments(iseg, end_node, links)
-    linked_nodes <- get_linked_nodes(end_node, linked_segs, segments)
-    angles <- interior_angle(nodes[end_node, ],
-                             nodes[start_node, , drop = FALSE],
-                             nodes[linked_nodes, , drop = FALSE])
-    best_link <- get_best_link(angles, linked_segs, angle_threshold_rad)
+
+    # if flow_mode, we choose the link on the same edge
+    if (flow_mode) {
+      best_link <- get_link_on_same_edge(linked_segs, edge_ids, edge_id)
+    }
+
+    # if not flow_mode or no link on the same edge, we calculate the angle
+    if (length(best_link) == 0 || !flow_mode) {
+      linked_nodes <- get_linked_nodes(end_node, linked_segs, segments)
+      angles <- interior_angle(nodes[end_node, ],
+                               nodes[start_node, , drop = FALSE],
+                               nodes[linked_nodes, , drop = FALSE])
+      best_link <- get_best_link(angles, linked_segs, angle_threshold_rad)
+    }
+
+
     if (length(best_link) > 0) best_links[iseg, "end"] <- best_link
   }
   return(best_links)
@@ -207,7 +232,14 @@ get_best_link <- function(angles, links, angle_threshold = 0) {
 }
 
 #' @noRd
-cross_check_links <- function(best_links, flow_mode = FALSE) {
+get_link_on_same_edge <- function(links, edge_ids, edge_id) {
+  is_same_edge <- edge_ids[links] == edge_id
+  link_on_same_edge <- links[is_same_edge]
+  return(link_on_same_edge)
+}
+
+#' @noRd
+cross_check_links <- function(best_links) {
 
   links <- array(integer(), dim = dim(best_links))
   colnames(links) <- c("start", "end")
