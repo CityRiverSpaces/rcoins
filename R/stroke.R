@@ -166,31 +166,40 @@ best_link <- function(
 
     # find angles formed with all segments linked at start point
     linked_segs <- get_linked_segments(iseg, start_node, links)
-    linked_nodes <- get_linked_nodes(start_node, linked_segs, segments)
-    angles <- interior_angle(nodes[start_node, ],
-                             nodes[end_node, , drop = FALSE],
-                             nodes[linked_nodes, , drop = FALSE])
-    best_link <- get_best_link(angles, linked_segs, angle_threshold_rad)
 
     # if flow_mode, we choose the link on the same edge
     if (flow_mode) {
       best_link <- get_link_on_same_edge(linked_segs, edge_ids, edge_id)
+    }
+
+    # if not flow_mode or no link on the same edge, we calculate the angle
+    if (length(best_link) == 0 || !flow_mode) {
+      linked_nodes <- get_linked_nodes(start_node, linked_segs, segments)
+      angles <- interior_angle(nodes[start_node, ],
+                               nodes[end_node, , drop = FALSE],
+                               nodes[linked_nodes, , drop = FALSE])
+      best_link <- get_best_link(angles, linked_segs, angle_threshold_rad)
     }
 
     if (length(best_link) > 0) best_links[iseg, "start"] <- best_link
 
     # find angles formed with all segments linked at end point
     linked_segs <- get_linked_segments(iseg, end_node, links)
-    linked_nodes <- get_linked_nodes(end_node, linked_segs, segments)
-    angles <- interior_angle(nodes[end_node, ],
-                             nodes[start_node, , drop = FALSE],
-                             nodes[linked_nodes, , drop = FALSE])
-    best_link <- get_best_link(angles, linked_segs, angle_threshold_rad)
 
     # if flow_mode, we choose the link on the same edge
     if (flow_mode) {
       best_link <- get_link_on_same_edge(linked_segs, edge_ids, edge_id)
     }
+
+    # if not flow_mode or no link on the same edge, we calculate the angle
+    if (length(best_link) == 0 || !flow_mode) {
+      linked_nodes <- get_linked_nodes(end_node, linked_segs, segments)
+      angles <- interior_angle(nodes[end_node, ],
+                               nodes[start_node, , drop = FALSE],
+                               nodes[linked_nodes, , drop = FALSE])
+      best_link <- get_best_link(angles, linked_segs, angle_threshold_rad)
+    }
+
 
     if (length(best_link) > 0) best_links[iseg, "end"] <- best_link
   }
