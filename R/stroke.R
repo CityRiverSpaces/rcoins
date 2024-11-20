@@ -200,9 +200,8 @@ interior_angle <- function(v, p1, p2) {
 #' @noRd
 get_best_link <- function(angles, links, angle_threshold = 0) {
   if (length(angles) == 0) return(NA)
-  is_above_threshold <- angles > angle_threshold
-  idx_above_threshold <- which(is_above_threshold)
-  is_best_link <- which.max(angles[is_above_threshold])
+  idx_above_threshold <- which(angles > angle_threshold)
+  is_best_link <- which.max(angles[idx_above_threshold])
   best_link <- links[idx_above_threshold[is_best_link]]
   return(best_link)
 }
