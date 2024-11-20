@@ -61,7 +61,7 @@ stroke <- function(edges, angle_threshold = 0, attributes = FALSE,
 
   # calculate interior angles between segment pairs, identify best links
   best_links <- best_link(
-    nodes, segments, links, edge_ids, angle_threshold, flow_mode
+    nodes, segments, links, edge_ids, flow_mode, angle_threshold
   )
 
   if (is.null(from_edge)) {
