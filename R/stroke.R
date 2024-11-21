@@ -34,7 +34,6 @@ stroke <- function(edges, angle_threshold = 0, attributes = FALSE,
     stop("Stroke attributes can be returned only if `flow_mode = TRUE`)")
   }
 
-  if (attributes) stop("attribute mode not implemented.")
   if (!is.null(from_edge) && (attributes || flow_mode)) {
     stop("from_edge is not compatible with attributes or flow_mode")
   }
@@ -82,10 +81,19 @@ stroke <- function(edges, angle_threshold = 0, attributes = FALSE,
   }
 
   # merge line segments into strokes following the predetermined connectivity
-  strokes <- merge_lines(nodes, segments, final_links, segments_ids, from_edge)
+  merged_lines <- merge_lines(
+    nodes, segments, final_links, edge_ids, segments_ids, from_edge
+  )
+  strokes <- merged_lines$strokes
 
   # add the CRS to the edges, done!
   sf::st_crs(strokes) <- crs
+
+  # if attributes true, return a vector of edge ids of sfc with stroke ids
+  if (attributes) {
+    return(merged_lines$stroke_ids)
+  }
+
   return(strokes)
 }
 
@@ -281,57 +289,72 @@ to_linestring <- function(node_id, nodes) {
 }
 
 #' @noRd
-traverse_segments <- function(start_node, start_link, segments, links,
-                              is_segment_used, from_edge) {
+traverse_segments <- function(start_node, start_link, stroke_id, segments,
+                              links, edge_ids, is_segment_used, stroke_ids,
+                              from_edge) {
   node <- start_node
   link <- start_link
   stroke <- c()
 
   while (TRUE) {
     if (is.na(link) || (is_segment_used[link] && is.null(from_edge))) break
+    # Store the stroke ID
+    stroke_ids[edge_ids[link]] <- stroke_id
     new <- get_next(node, link, segments, links)
     # Modify the local is_segment_used
     is_segment_used[link] <- TRUE
+
     node <- new$node
     link <- new$link
     stroke <- c(node, stroke)
   }
   # Return updated is_segment_used
-  return(list(stroke = stroke, is_segment_used = is_segment_used))
+  return(list(stroke = stroke, is_segment_used = is_segment_used,
+              stroke_ids = stroke_ids))
 }
 
 merge_lines <- function(
-  nodes, segments, links, segment_ids, from_edge = NULL
+  nodes, segments, links, edge_ids, segment_ids, from_edge = NULL
 ) {
   is_segment_used <- array(FALSE, dim = nrow(segments))
   strokes <- sf::st_sfc()
+  # an array to store the stroke IDs
+  stroke_ids <- array(integer(), dim = max(edge_ids))
+  stroke_id <- 1
   for (iseg in segment_ids) {
     if (is_segment_used[iseg]) next
 
     stroke <- segments[iseg, ]
-
     is_segment_used[iseg] <- TRUE
+    stroke_ids[edge_ids[iseg]] <- stroke_id
 
     # Traverse forwards from the start node
     node  <- segments[iseg, "start"]
     link <- links[iseg, "start"]
 
-    forward_result <- traverse_segments(node, link, segments, links,
-                                        is_segment_used, from_edge)
+    forward_result <- traverse_segments(node, link, stroke_id, segments, links,
+                                        edge_ids, is_segment_used, stroke_ids,
+                                        from_edge)
     forward_stroke <- forward_result$stroke
     is_segment_used <- forward_result$is_segment_used
+    stroke_ids <- forward_result$stroke_ids
 
     # Traverse backwards from the end node
     node  <- segments[iseg, "end"]
     link <- links[iseg, "end"]
-    backward_result <- traverse_segments(node, link, segments, links,
-                                         is_segment_used, from_edge)
+    backward_result <- traverse_segments(node, link, stroke_id, segments, links,
+                                         edge_ids, is_segment_used, stroke_ids,
+                                         from_edge)
     backward_stroke <- rev(backward_result$stroke)
     is_segment_used <- backward_result$is_segment_used
+    stroke_ids <- backward_result$stroke_ids
 
     # Combine strokes and add to results
     stroke <- c(forward_stroke, stroke, backward_stroke)
     strokes <- c(strokes, to_linestring(stroke, nodes))
+
+    # update the stroke ID
+    stroke_id <- stroke_id + 1
   }
-  return(strokes)
+  return(list(strokes = strokes, stroke_ids = stroke_ids))
 }
