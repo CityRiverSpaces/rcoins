@@ -244,7 +244,7 @@ check_reciprocal <- function(best_links, side) {
 }
 
 #' @noRd
-cross_check_links <- function(best_links, flow_mode = FALSE) {
+cross_check_links <- function(best_links) {
   links <- array(integer(), dim = dim(best_links))
   colnames(links) <- c("start", "end")
 
