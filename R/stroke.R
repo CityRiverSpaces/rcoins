@@ -345,9 +345,8 @@ merge_lines <- function(
     }
     strokes <- c(strokes, to_linestring(stroke, nodes))
 
-    # store the edge ID and the stroke ID
-    edge_id <- edge_ids[iseg]
-    stroke_ids[edge_id] <- stroke_id
+    # store the stroke ID
+    stroke_ids[edge_ids[iseg]] <- stroke_id
 
     # update the stroke ID
     stroke_id <- stroke_id + 1
