@@ -300,7 +300,7 @@ merge_lines <- function(
   is_segment_used <- array(FALSE, dim = nrow(segments))
   strokes <- sf::st_sfc()
 
-  # an array to store the edge ID and the stroke ID
+  # an array to store the stroke IDs
   stroke_ids <- array(integer(), dim = max(edge_ids))
   stroke_id <- 1
 
