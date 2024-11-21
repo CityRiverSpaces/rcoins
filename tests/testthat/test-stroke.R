@@ -21,6 +21,10 @@ l7 <- sf::st_linestring(c(p5, p6))
 
 test_that("a stroke is found in a very simple network", {
   sfc <- sf::st_sfc(l1, l2, l3)
+  #           p4
+  #         /
+  # p1 - p2 - p3
+
   expected <- sf::st_sfc(sf::st_linestring(c(p1, p2, p3)), l3)
   actual <- stroke(sfc)
   expect_setequal(actual, expected)
@@ -75,10 +79,21 @@ test_that("multilinestrings are not supported", {
 })
 
 test_that("proper attributes are returned for a very simple network", {
-  skip(message = "attribute mode to be implemented")
   sfc <- sf::st_sfc(l1, l2, l3)
   expected <- as.integer(c(1, 1, 2))
   actual <- stroke(sfc, attributes = TRUE, flow_mode = TRUE)
+  expect_setequal(actual, expected)
+})
+
+test_that("proper attributes are returned for a more complex network", {
+  # p1 - p2  p3
+  #         \ |
+  #           p5 - p6
+  sfc <- sf::st_sfc(l1, l4, l5, l7)
+  expected <- c(1, 1, 2, 1)
+  actual <- stroke(
+    sfc, angle_threshold = 0, attributes = TRUE, flow_mode = TRUE
+  )
   expect_setequal(actual, expected)
 })
 
@@ -104,7 +119,6 @@ test_that("a more complex network with threshold does not form strokes", {
 })
 
 test_that("attributes cannot be returned if not in flow mode", {
-  skip(message = "attribute mode to be implemented")
   sfc <- sf::st_sfc(l1, l2)
   expect_error(stroke(sfc, attributes = TRUE, flow_mode = FALSE),
                "Stroke attributes can be returned only if `flow_mode = TRUE`)")
@@ -163,10 +177,8 @@ test_that("same strokes can be formed when one of the edges is reversed", {
   expect_setequal(actual, expected)
 })
 
-test_that("attributes can be returned if edge is specified in flow mode", {
-  skip(message = "flow mode to be implemented")
+test_that("attributes can't be returned if edge is specified", {
   sfc <- sf::st_sfc(l1, l2, l5, l7)
-  expected <- as.integer(c(1, NA, 1, 1))
-  actual <- stroke(sfc, attribute = TRUE, flow_mode = TRUE, from_edge = 3)
-  expect_setequal(actual, expected)
+  expect_error(stroke(sfc, attribute = TRUE, flow_mode = TRUE, from_edge = 3),
+               "from_edge is not compatible with attributes or flow_mode")
 })
