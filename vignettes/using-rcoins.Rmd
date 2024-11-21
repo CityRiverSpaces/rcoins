@@ -1,0 +1,94 @@
+---
+title: "Tracing continuous streets using rcoins"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Tracing continuous streets using rcoins}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(rcoins)
+library(sf)
+library(ggplot2)
+```
+
+In this article we demonstrate how to trace continuous streets using the `stroke()` function. The function takes an `sf` object of streets and returns a new `sf` object with continuous streets.
+
+```{r}
+# Load streets from example data
+streets <- bucharest$streets
+```
+
+## Tracing on the entire network
+
+If we run the `stroke()` function with the default values, strokes will be calculated on the network as a whole.
+
+```{r}
+# Trace continuous streets
+continuous_streets <- stroke(streets)
+```
+
+To visualise the strokes in a more intuitive way, we map the line weight of the streets to the length of the streets. The thicker a line is, the longer the street.
+
+```{r echo=FALSE}
+ggplot() +
+  geom_sf(data = continuous_streets, aes(linewidth = as.numeric(length))) +
+  scale_linewidth_continuous(name = "Continuous lines", range = c(0.1, 1.2)) +
+  xlim(418500, 437500) +
+  ylim(4909800, 4931500) +
+  coord_sf(datum = st_crs(32635)) +
+  labs(title = "Continuous streets along the main street network of Bucharest", 
+       subtitle = "Lineweight by length",
+       caption = "Data: OpenStreetMap")
+```
+
+## Tracing from specified streets
+
+To trace continuous streets from a given set of streets, we can add the edge indices in the `from_edge` argument. We demonstrate this by tracing all continuous streets crossing river Dâmbovița in Bucharest. We load the river centerline from the package data.
+
+```{r}
+# Load river centerline from example data
+river_centerline <- bucharest$river_centerline
+
+# TODO add any necessary steps to get the IDs of the edges crossing the river
+crossing_edges <- st_intersects(streets, river_centerline)
+
+# Trace continuous streets crossing the river
+continuous_streets_crossing <- stroke(streets, from_edge = crossing_edges)
+```
+
+We plot the street network and emphasize the continuous streets crossing the river.
+
+```{r echo=FALSE}
+ggplot() +
+  geom_sf(data = continuous_streets_crossing, linewidth = 2, colour = "red") +
+  xlim(418500, 437500) +
+  ylim(4909800, 4931500) +
+  coord_sf(datum = st_crs(32635)) +
+  labs(title = "Continuous streets crossing River Dâmbovița in Bucharest", 
+       subtitle = "Crossing streets thicker",
+       caption = "Data: OpenStreetMap")
+```
+
+## Maintaining the initial structure
+
+The `flow_mode` argument allows us to maintain the initial structure of the streets. With `flow_mode = FALSE`, the function will split the streets in individual segments and calculate the continuous streets purely based on minimum angle deviations with `angle_threshold`. With `flow_mode = TRUE`, the function will not break the initial line strings. This is necessary when we want to maintain the attributes of the initial linestrings in the resulting strokes.
+
+<!-- Question: is there a situation when we want `flow_mode = TRUE` without `attribute_mode = TRUE`? If not, we may want to drop this argument, or at least not present it in the vignette. -->
+
+## Tracing with attributes
+
+By enabling `flow_mode` and `attribute_mode` arguments, we can maintain the attributes of the input network. This is useful if we want to keep attributes such as degree of the initial streets ("primary", "secondary", "tertiary", etc.) in the resulting continuous streets to calculate, for instance, the relationship between street degree and street length.
+
+```{r}
+# TODO add code to demonstrate how to maintain the attributes of the initial streets
+```
+
