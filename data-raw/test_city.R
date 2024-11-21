@@ -1,0 +1,111 @@
+get_utm_zone <- function(x) {
+  bb <- sf::st_bbox(x)
+
+  centroid_long <- (bb[["xmin"]] + bb[["xmax"]]) / 2
+  centroid_lat <- (bb[["ymin"]] + bb[["ymax"]]) / 2
+  base <- if (centroid_lat >= 0) 32600 else 32700
+  epsg_code <- base + floor((centroid_long + 180) / 6) + 1
+  return(epsg_code)
+}
+
+get_osm_bb <- function(city_name) {
+  bb <- osmdata::getbb(city_name)
+  bb <- bb |> as.vector()
+  names(bb) <- c("xmin", "ymin", "xmax", "ymax")
+  bb <- sf::st_bbox(bb, crs = 4326)
+  return(bb)
+}
+
+osmdata_as_sf <- function(key, value, bb) {
+  bb |>
+    osmdata::opq() |>
+    osmdata::add_osm_feature(key = key, value = value) |>
+    osmdata::osmdata_sf()
+}
+
+get_osm_streets <- function(bb, crs, highway_values = NULL) {
+  if (is.null(highway_values)) {
+    highway_values <- c("motorway", "trunk", "primary", "secondary", "tertiary")
+  }
+
+  link_values <- sapply(X = highway_values,
+                        FUN = \(x) sprintf("%s_link", x),
+                        USE.NAMES = FALSE)
+
+  streets <- osmdata_as_sf("highway", c(highway_values, link_values), bb)
+
+  # Cast polygons (closed streets) into lines
+  poly_to_lines <- suppressWarnings(
+    streets$osm_polygons |> sf::st_cast("LINESTRING")
+  )
+
+  # Combine all features in one data frame
+  streets_lines <- streets$osm_lines |>
+    dplyr::bind_rows(poly_to_lines) |>
+    dplyr::select("highway") |>
+    dplyr::rename(!!rlang::sym("type") := !!rlang::sym("highway")) |>
+    sf::st_transform(crs)
+
+  return(streets_lines)
+}
+
+get_osm_river <- function(river_name, bb, crs) {
+  # Get the river centreline
+  river_centerline <- osmdata_as_sf("waterway", "river", bb)
+  river_centerline <- river_centerline$osm_multilines |>
+    dplyr::filter(.data$name == river_name) |>
+    sf::st_transform(crs) |>
+    sf::st_geometry()
+
+  return(list(centerline = river_centerline))
+}
+
+get_osmdata <- function(city_name, river_name, crs = NULL, buffer = NULL) {
+  bb <- get_osm_bb(city_name)
+
+  if (is.null(crs)) crs <- get_utm_zone(bb)
+
+  if (!is.null(buffer)) {
+    bb <- bb |>
+      sf::st_as_sfc() |>
+      sf::st_transform(crs = crs) |>
+      sf::st_buffer(buffer) |>
+      sf::st_transform(crs = 4326) |>
+      sf::st_bbox()
+  }
+
+  streets <- get_osm_streets(bb, crs)
+  river <- get_osm_river(river_name, bb, crs)
+
+  osm_data <- list(
+    name = city_name,
+    geom = list(
+      bb = bb,
+      river_centerline = river$centerline,
+      streets = streets
+    )
+  )
+
+  return(osm_data)
+}
+
+
+# Set the parameters
+city_name <- "Bucharest"
+river_name <- "Dâmbovița"
+epsg_code <- 32635
+bbox_buffer <- 2000
+
+# Fetch the data
+test_city <- get_osmdata(city_name, river_name, crs = epsg_code, buffer = bbox_buffer)
+
+# Fix encoding issue in the WKT string of city boundary
+fix_wkt_encoding <- function(x) {
+  wkt <- sf::st_crs(x)$wkt
+  sf::st_crs(x)$wkt <- gsub("°|º", "\\\u00b0", wkt)
+  x
+}
+test_city <- lapply(test_city$geom, fix_wkt_encoding)
+
+# Save as package data
+usethis::use_data(test_city, overwrite = TRUE)
