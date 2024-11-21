@@ -331,6 +331,7 @@ merge_lines <- function(
 
     # Combine strokes and add to results
     stroke <- c(forward_stroke, stroke, backward_stroke)
+    strokes <- c(strokes, to_linestring(stroke, nodes))
   }
   return(strokes)
 }
