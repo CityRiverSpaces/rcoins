@@ -317,9 +317,8 @@ merge_lines <- function(
       # one segment can appear in multiple strokes when using from_edge
       if (is.na(link) || (is_segment_used[link] && is.null(from_edge))) break
 
-      # store the edge ID and the stroke ID
-      edge_id <- edge_ids[link]
-      stroke_ids[edge_id] <- stroke_id
+      # store the stroke ID
+      stroke_ids[edge_ids[link]] <- stroke_id
 
       new <- get_next(node, link, segments, links)
       is_segment_used[link] <- TRUE
