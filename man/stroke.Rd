@@ -14,8 +14,8 @@ stroke(
 }
 \arguments{
 \item{edges}{An object of class \code{\link[sf]{sfc}} (or compatible),
-including the edge geometries (should be of type LineString or
-MultiLineString).}
+including the edge geometries (should be of type LINESTRING or
+MULTILINESTRING).}
 
 \item{angle_threshold}{Consecutive line segments can be considered part of
 the same stroke if the internal angle they form is larger than

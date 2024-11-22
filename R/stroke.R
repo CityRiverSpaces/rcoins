@@ -4,8 +4,8 @@
 #' sequences of edges that form naturally continuous strokes in a network.
 #'
 #' @param edges An object of class \code{\link[sf]{sfc}} (or compatible),
-#' including the edge geometries (should be of type LineString or
-#' MultiLineString).
+#' including the edge geometries (should be of type LINESTRING or
+#' MULTILINESTRING).
 #'
 #' @param angle_threshold Consecutive line segments can be considered part of
 #' the same stroke if the internal angle they form is larger than
@@ -34,15 +34,12 @@ stroke <- function(edges, angle_threshold = 0, attributes = FALSE,
     stop("Stroke attributes can be returned only if `flow_mode = TRUE`)")
   }
 
-  if (attributes) stop("attribute mode not implemented.")
-  if (flow_mode) stop("flow mode not implemented.")
-  if (!is.null(from_edge)) stop("from_edge mode not implemented")
+  if (!is.null(from_edge) && (attributes || flow_mode)) {
+    stop("from_edge is not compatible with attributes or flow_mode")
+  }
 
   edges_sfc <- to_sfc(edges)
   check_geometry(edges_sfc)
-
-  # extract CRS from the edges
-  crs <- sf::st_crs(edges_sfc)
 
   # split the edges into their constituent points
   edge_pts <- sfheaders::sfc_to_df(edges_sfc)
@@ -51,23 +48,29 @@ stroke <- function(edges, angle_threshold = 0, attributes = FALSE,
   nodes <- unique_nodes(edge_pts)
 
   # build array of line segments, referring to points using their IDs
-  segments <- to_line_segments(edge_pts, nodes)
+  line_segments <- to_line_segments(edge_pts, nodes)
+  segments <- line_segments$segments
+  edge_ids <- line_segments$edge_id
 
   # build connectivity table: for each node, find intersecting line segments
   links <- get_links(segments)
 
-  # calculate interior angles between segment pairs, identify best links
-  best_links <- best_link(nodes, segments, links, angle_threshold)
+  # identify best links by calculating interior angles between segment pairs
+  angle_threshold_rad <- angle_threshold / 180 * pi
+  best_links <- best_link(nodes, segments, links, edge_ids, flow_mode,
+                          angle_threshold_rad)
 
-  # verify that the best links identified fulfill input requirements
-  final_links <- cross_check_links(best_links, flow_mode)
+  # only when considering all edges we verify that best links are reciprocal
+  if (is.null(from_edge)) {
+    final_links <- cross_check_links(best_links)
+  } else {
+    final_links <- best_links
+  }
 
   # merge line segments into strokes following the predetermined connectivity
-  strokes  <- merge_lines(nodes, segments, final_links, from_edge)
-
-  # add the CRS to the edges, done!
-  sf::st_crs(strokes) <- crs
-  return(strokes)
+  crs <- sf::st_crs(edges_sfc)
+  merge_lines(nodes, segments, final_links, edge_ids, from_edge, attributes,
+              crs)
 }
 
 #' Find unique nodes and label them with IDs
@@ -91,8 +94,9 @@ to_line_segments <- function(points, nodes) {
   # values are the node IDs
   start <- points[!is_endpoint, "node_id"]
   end <- points[!is_startpoint, "node_id"]
+  edge_ids <- points[!is_endpoint, "linestring_id"]
   segments <- cbind(start, end)
-  return(segments)
+  return(list(segments = segments, edge_ids = edge_ids))
 }
 
 #' @noRd
@@ -131,39 +135,59 @@ get_linked_nodes <- function(node_id, segment_id, segments) {
 }
 
 #' @noRd
-best_link <- function(nodes, segments, links, angle_threshold = 0) {
-
+best_link <- function(
+  nodes, segments, links, edge_ids, flow_mode, angle_threshold = 0
+) {
   # convert nodes to a matrix for faster indexing
   nodes <- as.matrix(nodes[c("x", "y")])
 
   best_links <- array(integer(), dim = dim(segments))
   colnames(best_links) <- c("start", "end")
 
-  angle_threshold_rad <- angle_threshold / 180 * pi  # convert to radians
-
   for (iseg in seq_len(nrow(segments))) {
     start_node <- segments[iseg, "start"]
     end_node <- segments[iseg, "end"]
 
-    # find angles formed with all segments linked at start point
-    linked_segs <- get_linked_segments(iseg, start_node, links)
-    linked_nodes <- get_linked_nodes(start_node, linked_segs, segments)
-    angles <- interior_angle(nodes[start_node, ],
-                             nodes[end_node, , drop = FALSE],
-                             nodes[linked_nodes, , drop = FALSE])
-    best_link <- get_best_link(angles, linked_segs, angle_threshold_rad)
-    if (length(best_link) > 0) best_links[iseg, "start"] <- best_link
+    best_link_start <- find_best_link(start_node, end_node, iseg, segments,
+                                      links, nodes, edge_ids, flow_mode,
+                                      angle_threshold)
+    if (length(best_link_start) > 0)
+      best_links[iseg, "start"] <- best_link_start
 
-    # find angles formed with all segments linked at end point
-    linked_segs <- get_linked_segments(iseg, end_node, links)
-    linked_nodes <- get_linked_nodes(end_node, linked_segs, segments)
-    angles <- interior_angle(nodes[end_node, ],
-                             nodes[start_node, , drop = FALSE],
-                             nodes[linked_nodes, , drop = FALSE])
-    best_link <- get_best_link(angles, linked_segs, angle_threshold_rad)
-    if (length(best_link) > 0) best_links[iseg, "end"] <- best_link
+    best_link_end <- find_best_link(end_node, start_node, iseg, segments,
+                                    links, nodes, edge_ids, flow_mode,
+                                    angle_threshold)
+    if (length(best_link_end) > 0)
+      best_links[iseg, "end"] <- best_link_end
   }
   return(best_links)
+}
+
+#' @noRd
+find_best_link <- function(node, opposite_node, current_segment, segments,
+                           links, nodes, edge_ids, flow_mode, angle_threshold) {
+  linked_segs <- get_linked_segments(current_segment, node, links)
+  # if in flow mode, we look for a link on the same edge
+  if (flow_mode) {
+    best_link <- get_link_on_same_edge(linked_segs, current_segment, edge_ids)
+  }
+  # if not in flow mode or if no link is found on the same edge, we look for
+  # the best link by calculating the interior angles with all connections
+  if (length(best_link) == 0 || !flow_mode) {
+    linked_nodes <- get_linked_nodes(node, linked_segs, segments)
+    angles <- interior_angle(nodes[node, ],
+                             nodes[opposite_node, , drop = FALSE],
+                             nodes[linked_nodes, , drop = FALSE])
+    best_link <- get_best_link(angles, linked_segs, angle_threshold)
+  }
+  return(best_link)
+}
+
+#' @noRd
+get_link_on_same_edge <- function(links, current_segment, edge_ids) {
+  is_same_edge <- edge_ids[links] == edge_ids[current_segment]
+  link_on_same_edge <- links[is_same_edge]
+  return(link_on_same_edge)
 }
 
 #' @noRd
@@ -171,70 +195,69 @@ interior_angle <- function(v, p1, p2) {
   # compute convex angle between three points:
   # p1--v--p2 ("v" is the vertex)
   # NOTE: multiple points are supported as p1 and p2
-  dx1 <- p1[, "x"] - v["x"]
-  dx2 <- p2[, "x"] - v["x"]
-  dy1 <- p1[, "y"] - v["y"]
-  dy2 <- p2[, "y"] - v["y"]
+  dx1 <- p1[, "x"] - v[["x"]]
+  dx2 <- p2[, "x"] - v[["x"]]
+  dy1 <- p1[, "y"] - v[["y"]]
+  dy2 <- p2[, "y"] - v[["y"]]
   dot_product <- dx1 * dx2 + dy1 * dy2
   norm1 <- sqrt(dx1^2 + dy1^2)
   norm2 <- sqrt(dx2^2 + dy2^2)
   cos_theta <- dot_product / (norm1 * norm2)
-  angle <- acos(cos_theta)
+  angle <- acos(round(cos_theta, 6))
   return(angle)
 }
 
 #' @noRd
 get_best_link <- function(angles, links, angle_threshold = 0) {
   if (length(angles) == 0) return(NA)
-  is_above_threshold <- angles > angle_threshold
-  is_best_link <- which.max(angles[is_above_threshold])
-  best_link <- links[is_best_link]
+  idx_above_threshold <- which(angles > angle_threshold)
+  is_best_link <- which.max(angles[idx_above_threshold])
+  best_link <- links[idx_above_threshold[is_best_link]]
   return(best_link)
 }
 
 #' @noRd
-cross_check_links <- function(best_links, flow_mode = FALSE) {
-
-  links <- array(integer(), dim = dim(best_links))
-  colnames(links) <- c("start", "end")
-
+check_reciprocal <- function(best_links, side) {
   # find the best link of the best links
-  bl <- best_links[best_links[, "start"], ]
+  bl <- best_links[best_links[, side], ]
   # we check both ends to see whether the best link is reciprocal
   is_best_link <- bl == seq_len(nrow(bl))
   # if we have a match on either of the sides, we keep the link
   is_reciprocal <- apply(is_best_link, 1, any)
-  is_reciprocal[is.na(is_reciprocal)] <- FALSE  # fix for NA values
-  links[is_reciprocal, "start"] <- best_links[is_reciprocal, "start"]
+  # fix for NA values
+  is_reciprocal[is.na(is_reciprocal)] <- FALSE
 
-  # exact same as above, for the other side
-  bl <- best_links[best_links[, "end"], ]
-  is_best_link <- bl == seq_len(nrow(bl))
-  is_reciprocal <- apply(is_best_link, 1, any)
-  is_reciprocal[is.na(is_reciprocal)] <- FALSE  # fix for NA values
-  links[is_reciprocal, "end"] <- best_links[is_reciprocal, "end"]
+  return(is_reciprocal)
+}
+
+#' @noRd
+cross_check_links <- function(best_links) {
+  links <- array(integer(), dim = dim(best_links))
+  colnames(links) <- c("start", "end")
+
+  is_start_reciprocal <- check_reciprocal(best_links, "start")
+  links[is_start_reciprocal, "start"] <-
+    best_links[is_start_reciprocal, "start"]
+
+  is_end_reciprocal <- check_reciprocal(best_links, "end")
+  links[is_end_reciprocal, "end"] <-
+    best_links[is_end_reciprocal, "end"]
 
   return(links)
 }
 
 #' @noRd
-get_next_node <- function(node, segment, segments) {
-  # find the node connected to the given one via the given segment
-  # 1. get the nodes that are part of the given segment
-  nodes <- segments[segment, ]
-  # 2. exclude the given node from the list
+get_next <- function(node, link, segments, links) {
+  # find the node and segment connected to the current ones via the given link
+  # 1. get the nodes and segments connected to the given link
+  nodes <- segments[link, ]
+  segs <- links[link, ]
+  # 2. identify the position of the current node in the arrays (the current
+  #    segment will be in the same position
   is_current <- nodes == node
-  return(nodes[!is_current])
-}
-
-#' @noRd
-get_next_segment <- function(segment, link, links) {
-  # find the segment connected to the given one via the given link
-  #  1. get the segments connected to the given link
-  segments <- links[link, ]
-  #  2. exclude the given segment from the list
-  is_current <- segments == segment
-  return(segments[!is_current])
+  # 3. exclude the current node and segment from the respective lists to find
+  #    the new elements
+  return(list(node = nodes[!is_current], link = segs[!is_current]))
 }
 
 #' @noRd
@@ -245,63 +268,75 @@ to_linestring <- function(node_id, nodes) {
 }
 
 #' @noRd
-traverse_segments <- function(start_node, start_link, start_segment,
-                              direction, segments, links, is_segment_used) {
-  node <- start_node
-  link <- start_link
-  segment <- start_segment
+traverse_segments <- function(node, link, stroke_label, segments,
+                              links, edge_ids, is_segment_used, stroke_labels,
+                              can_reuse_segments) {
   stroke <- c()
-
   while (TRUE) {
-    if (is.na(link) || is_segment_used[link]) break
-    node <- get_next_node(node, link, segments)
-    if (direction == "forward") {
-      stroke <- c(node, stroke)
-    } else {
-      stroke <- c(stroke, node)
-    }
-    # Modify the local is_segment_used
+    if (is.na(link) || (is_segment_used[link] && !can_reuse_segments)) break
+    stroke_labels[edge_ids[link]] <- stroke_label
+    new <- get_next(node, link, segments, links)
     is_segment_used[link] <- TRUE
-    new_link <- get_next_segment(segment, link, links)
-    segment <- link
-    link <- new_link
+    node <- new$node
+    link <- new$link
+    stroke <- c(node, stroke)
   }
-  # Return updated is_segment_used
-  return(list(stroke = stroke, is_segment_used = is_segment_used))
+  return(list(stroke = stroke, is_segment_used = is_segment_used,
+              stroke_labels = stroke_labels))
 }
 
-#' @noRd
-merge_lines  <- function(nodes, segments, links, from_edge = NULL) {
+merge_lines <- function(
+  nodes, segments, links, edge_ids, from_edge = NULL, attributes = FALSE,
+  crs = NULL
+) {
   is_segment_used <- array(FALSE, dim = nrow(segments))
+  stroke_labels <- array(integer(), dim = max(edge_ids))
   strokes <- sf::st_sfc()
-  for (iseg in seq_len(nrow(segments))) {
+  if (is.null(from_edge)) {
+    segment_ids <- seq_len(nrow(segments))
+    can_reuse_segments <- FALSE
+  } else {
+    segment_ids <- which(edge_ids %in% from_edge)
+    can_reuse_segments <- TRUE
+  }
+  istroke <- 1
+  for (iseg in segment_ids) {
     if (is_segment_used[iseg]) next
 
     stroke <- segments[iseg, ]
-
     is_segment_used[iseg] <- TRUE
+    stroke_labels[edge_ids[iseg]] <- istroke
 
-    # Traverse forwards from the start node
+    # traverse forwards from the start node
     node  <- segments[iseg, "start"]
     link <- links[iseg, "start"]
-    segment <- iseg
-    forward_result <- traverse_segments(node, link, segment, "forward",
-                                        segments, links, is_segment_used)
+    forward_result <- traverse_segments(node, link, istroke, segments, links,
+                                        edge_ids, is_segment_used,
+                                        stroke_labels, can_reuse_segments)
     forward_stroke <- forward_result$stroke
     is_segment_used <- forward_result$is_segment_used
+    stroke_labels <- forward_result$stroke_labels
 
-    # Traverse backwards from the end node
+    # traverse backwards from the end node
     node  <- segments[iseg, "end"]
     link <- links[iseg, "end"]
-    segment <- iseg
-    backward_result <- traverse_segments(node, link, segment, "backward",
-                                         segments, links, is_segment_used)
-    backward_stroke <- backward_result$stroke
+    backward_result <- traverse_segments(node, link, istroke, segments, links,
+                                         edge_ids, is_segment_used,
+                                         stroke_labels, can_reuse_segments)
+    backward_stroke <- rev(backward_result$stroke)
     is_segment_used <- backward_result$is_segment_used
+    stroke_labels <- backward_result$stroke_labels
 
-    # Combine strokes and add to results
+    # combine strokes and add to results
     stroke <- c(forward_stroke, stroke, backward_stroke)
     strokes <- c(strokes, to_linestring(stroke, nodes))
+    istroke <- istroke + 1
   }
-  return(strokes)
+  # only at the end, add CRS
+  sf::st_crs(strokes) <- sf::st_crs(crs)
+  if (attributes) {
+    return(stroke_labels)
+  } else {
+    return(strokes)
+  }
 }
