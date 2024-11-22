@@ -24,7 +24,6 @@ test_that("a stroke is found in a very simple network", {
   #           p4
   #         /
   # p1 - p2 - p3
-
   expected <- sf::st_sfc(sf::st_linestring(c(p1, p2, p3)), l3)
   actual <- stroke(sfc)
   expect_setequal(actual, expected)
@@ -144,6 +143,13 @@ test_that("edges are not split if flow_mode is true", {
   expect_setequal(actual, expected)
 })
 
+test_that("a ring is recognized as a stroke also in flow_mode", {
+  sfc <- sf::st_sfc(l2, l4, l6, l7)
+  expected <- sf::st_sfc(sf::st_linestring(c(p3, p6, p5, p2, p3)))
+  actual <- stroke(sfc, flow_mode = TRUE)
+  expect_setequal(actual, expected)
+})
+
 test_that("strokes can be formed starting from a given edge", {
   new_l1 <- sf::st_linestring(c(p1, p2, p3))
   sfc <- sf::st_sfc(new_l1, l4, l7)
@@ -181,4 +187,13 @@ test_that("attributes can't be returned if edge is specified", {
   sfc <- sf::st_sfc(l1, l2, l5, l7)
   expect_error(stroke(sfc, attribute = TRUE, flow_mode = TRUE, from_edge = 3),
                "from_edge is not compatible with attributes or flow_mode")
+})
+
+test_that("a ring is recognized when from_edge is specified", {
+  # This is currently an infinite loop
+  skip_on_ci()
+  sfc <- sf::st_sfc(l2, l4, l6, l7)
+  expected <- sf::st_sfc(sf::st_linestring(c(p3, p6, p5, p2, p3)))
+  actual <- stroke(sfc, from_edge = 1)
+  expect_setequal(actual, expected)
 })
