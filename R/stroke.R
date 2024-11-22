@@ -75,8 +75,9 @@ stroke <- function(edges, angle_threshold = 0, attributes = FALSE,
 
 #' Find unique nodes and label them with IDs
 #' @noRd
+#' @importFrom rlang .data
 unique_nodes <- function(edge_points) {
-  nodes <- dplyr::distinct(edge_points, x, y)
+  nodes <- dplyr::distinct(edge_points, .data$x, .data$y)
   nodes$node_id <- seq_len(nrow(nodes))
   return(nodes)
 }
@@ -99,10 +100,11 @@ to_line_segments <- function(points, nodes) {
 }
 
 #' @noRd
+#' @importFrom rlang .data
 get_links <- function(segments) {
   nsegments <- nrow(segments)
   links <- data.frame(node_id = as.vector(segments)) |>
-    dplyr::group_by(node_id) |>
+    dplyr::group_by(.data$node_id) |>
     dplyr::group_rows()  |>
     lapply(function(x) (x - 1) %% nsegments + 1)
   return(links)
