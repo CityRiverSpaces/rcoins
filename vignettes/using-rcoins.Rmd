@@ -37,7 +37,7 @@ If we run the `stroke()` function with the default values, strokes will be calcu
 continuous_streets <- stroke(streets)
 ```
 
-To visualise the strokes in a more intuitive way, we map the line weight of the streets to the length of the streets. The thicker a line is, the longer the street.
+To visualise the strokes in a more intuitive way, we map the line weight in the plot to the length of the strokes. The thicker a line is, the longer the stroke.
 
 ```{r echo=FALSE}
 ggplot() +
