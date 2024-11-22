@@ -201,7 +201,7 @@ interior_angle <- function(v, p1, p2) {
   norm1 <- sqrt(dx1^2 + dy1^2)
   norm2 <- sqrt(dx2^2 + dy2^2)
   cos_theta <- dot_product / (norm1 * norm2)
-  angle <- acos(cos_theta)
+  angle <- acos(round(cos_theta, 6))
   return(angle)
 }
 
