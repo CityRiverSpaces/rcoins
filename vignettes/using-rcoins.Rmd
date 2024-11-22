@@ -86,7 +86,7 @@ The `flow_mode` argument allows us to maintain the initial structure of the stre
 
 ## Tracing with attributes
 
-By enabling `flow_mode` and `attribute_mode` arguments, we can maintain the attributes of the input network. This is useful if we want to keep attributes such as degree of the initial streets ("primary", "secondary", "tertiary", etc.) in the resulting continuous streets to calculate, for instance, the relationship between street degree and street length.
+By enabling `flow_mode` and `attribute` arguments, we can maintain the attributes of the input network. This is useful if we want to keep attributes such as degree of the initial streets ("primary", "secondary", "tertiary", etc.) in the resulting continuous streets to calculate, for instance, the relationship between street degree and street length.
 
 ```{r}
 # TODO add code to demo how to maintain the attributes of the initial streets
