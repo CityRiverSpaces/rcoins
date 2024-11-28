@@ -59,8 +59,8 @@ To trace continuous streets from a given set of streets, we can add the edge ind
 # Load river centerline from example data
 river_centerline <- bucharest$river_centerline
 
-crossing_edges <- which(st_intersects(streets, 
-                                      river_centerline, 
+crossing_edges <- which(st_intersects(streets,
+                                      river_centerline,
                                       sparse = FALSE))
 
 # Trace continuous streets crossing the river
