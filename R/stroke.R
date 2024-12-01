@@ -267,31 +267,12 @@ to_linestring <- function(node_id, nodes) {
   return(linestring)
 }
 
-#' @noRd
-traverse_segments <- function(node, link, stroke_label, segments,
-                              links, edge_ids, is_segment_used, stroke_labels,
-                              can_reuse_segments) {
-  stroke <- c()
-  while (TRUE) {
-    if (is.na(link) || (is_segment_used[link] && !can_reuse_segments)) break
-    stroke_labels[edge_ids[link]] <- stroke_label
-    new <- get_next(node, link, segments, links)
-    is_segment_used[link] <- TRUE
-    node <- new$node
-    link <- new$link
-    stroke <- c(node, stroke)
-  }
-  return(list(stroke = stroke, is_segment_used = is_segment_used,
-              stroke_labels = stroke_labels))
-}
-
-merge_lines <- function(
-  nodes, segments, links, edge_ids, from_edge = NULL, attributes = FALSE,
-  crs = NULL
-) {
+merge_lines <- function(nodes, segments, links, edge_ids,
+                        from_edge = NULL, attributes = FALSE, crs = NULL) {
   is_segment_used <- array(FALSE, dim = nrow(segments))
   stroke_labels <- array(integer(), dim = max(edge_ids))
   strokes <- sf::st_sfc()
+  
   if (is.null(from_edge)) {
     segment_ids <- seq_len(nrow(segments))
     can_reuse_segments <- FALSE
@@ -299,7 +280,24 @@ merge_lines <- function(
     segment_ids <- which(edge_ids %in% from_edge)
     can_reuse_segments <- TRUE
   }
+  
   istroke <- 1
+  
+  traverse_segments <- function(node, link, stroke_label) {
+      stroke <- c()
+      while (TRUE) {
+          if (is.na(link) || (is_segment_used[link] && !can_reuse_segments)) break
+          stroke_labels[edge_ids[link]] <- stroke_label
+          new <- get_next(node, link, segments, links)
+          is_segment_used[link] <- TRUE
+          node <- new$node
+          link <- new$link
+          stroke <- c(node, stroke)
+      }
+      return(list(stroke = stroke, is_segment_used = is_segment_used,
+                  stroke_labels = stroke_labels))
+  }
+  
   for (iseg in segment_ids) {
     if (is_segment_used[iseg]) next
 
@@ -310,9 +308,7 @@ merge_lines <- function(
     # traverse forwards from the start node
     node  <- segments[iseg, "start"]
     link <- links[iseg, "start"]
-    forward_result <- traverse_segments(node, link, istroke, segments, links,
-                                        edge_ids, is_segment_used,
-                                        stroke_labels, can_reuse_segments)
+    forward_result <- traverse_segments(node, link, istroke)
     forward_stroke <- forward_result$stroke
     is_segment_used <- forward_result$is_segment_used
     stroke_labels <- forward_result$stroke_labels
@@ -320,9 +316,7 @@ merge_lines <- function(
     # traverse backwards from the end node
     node  <- segments[iseg, "end"]
     link <- links[iseg, "end"]
-    backward_result <- traverse_segments(node, link, istroke, segments, links,
-                                         edge_ids, is_segment_used,
-                                         stroke_labels, can_reuse_segments)
+    backward_result <- traverse_segments(node, link, istroke)
     backward_stroke <- rev(backward_result$stroke)
     is_segment_used <- backward_result$is_segment_used
     stroke_labels <- backward_result$stroke_labels
@@ -332,6 +326,7 @@ merge_lines <- function(
     strokes <- c(strokes, to_linestring(stroke, nodes))
     istroke <- istroke + 1
   }
+
   # only at the end, add CRS
   sf::st_crs(strokes) <- sf::st_crs(crs)
   if (attributes) {
