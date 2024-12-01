@@ -272,7 +272,7 @@ merge_lines <- function(nodes, segments, links, edge_ids,
   is_segment_used <- array(FALSE, dim = nrow(segments))
   stroke_labels <- array(integer(), dim = max(edge_ids))
   strokes <- sf::st_sfc()
-  
+
   if (is.null(from_edge)) {
     segment_ids <- seq_len(nrow(segments))
     can_reuse_segments <- FALSE
@@ -280,24 +280,23 @@ merge_lines <- function(nodes, segments, links, edge_ids,
     segment_ids <- which(edge_ids %in% from_edge)
     can_reuse_segments <- TRUE
   }
-  
-  istroke <- 1
-  
+
   traverse_segments <- function(node, link, stroke_label) {
-      stroke <- c()
-      while (TRUE) {
-          if (is.na(link) || (is_segment_used[link] && !can_reuse_segments)) break
-          stroke_labels[edge_ids[link]] <- stroke_label
-          new <- get_next(node, link, segments, links)
-          is_segment_used[link] <- TRUE
-          node <- new$node
-          link <- new$link
-          stroke <- c(node, stroke)
-      }
-      return(list(stroke = stroke, is_segment_used = is_segment_used,
-                  stroke_labels = stroke_labels))
+    stroke <- c()
+    while (TRUE) {
+      if (is.na(link) || (is_segment_used[link] && !can_reuse_segments)) break
+      stroke_labels[edge_ids[link]] <- stroke_label
+      new <- get_next(node, link, segments, links)
+      is_segment_used[link] <- TRUE
+      node <- new$node
+      link <- new$link
+      stroke <- c(node, stroke)
+    }
+    return(list(stroke = stroke, is_segment_used = is_segment_used,
+                stroke_labels = stroke_labels))
   }
-  
+
+  istroke <- 1
   for (iseg in segment_ids) {
     if (is_segment_used[iseg]) next
 
