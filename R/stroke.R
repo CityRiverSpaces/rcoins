@@ -164,11 +164,11 @@ best_link <- function(nodes, segments, links, edge_ids, flow_mode,
 
     best_link_start <- find_best_link(start_node, end_node, iseg)
     if (length(best_link_start) > 0)
-        best_links[iseg, "start"] <- best_link_start
-    
+      best_links[iseg, "start"] <- best_link_start
+
     best_link_end <- find_best_link(end_node, start_node, iseg)
     if (length(best_link_end) > 0)
-        best_links[iseg, "end"] <- best_link_end
+      best_links[iseg, "end"] <- best_link_end
   }
   return(best_links)
 }
