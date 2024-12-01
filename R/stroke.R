@@ -135,11 +135,25 @@ get_linked_nodes <- function(node_id, segment_id, segments) {
 }
 
 #' @noRd
-best_link <- function(
-  nodes, segments, links, edge_ids, flow_mode, angle_threshold = 0
-) {
-  # convert nodes to a matrix for faster indexing
-  nodes <- as.matrix(nodes[c("x", "y")])
+best_link <- function(nodes, segments, links, edge_ids, flow_mode,
+                      angle_threshold = 0) {
+  find_best_link <- function(node, opposite_node, current_segment) {
+    linked_segs <- get_linked_segments(current_segment, node, links)
+    # if in flow mode, we look for a link on the same edge
+    if (flow_mode) {
+      best_link <- get_link_on_same_edge(linked_segs, current_segment, edge_ids)
+    }
+    # if not in flow mode or if no link is found on the same edge, we look for
+    # the best link by calculating the interior angles with all connections
+    if (length(best_link) == 0 || !flow_mode) {
+      linked_nodes <- get_linked_nodes(node, linked_segs, segments)
+      angles <- interior_angle(nodes[node, ],
+                               nodes[opposite_node, , drop = FALSE],
+                               nodes[linked_nodes, , drop = FALSE])
+      best_link <- get_best_link(angles, linked_segs, angle_threshold)
+    }
+    return(best_link)
+  }
 
   best_links <- array(integer(), dim = dim(segments))
   colnames(best_links) <- c("start", "end")
@@ -161,26 +175,6 @@ best_link <- function(
       best_links[iseg, "end"] <- best_link_end
   }
   return(best_links)
-}
-
-#' @noRd
-find_best_link <- function(node, opposite_node, current_segment, segments,
-                           links, nodes, edge_ids, flow_mode, angle_threshold) {
-  linked_segs <- get_linked_segments(current_segment, node, links)
-  # if in flow mode, we look for a link on the same edge
-  if (flow_mode) {
-    best_link <- get_link_on_same_edge(linked_segs, current_segment, edge_ids)
-  }
-  # if not in flow mode or if no link is found on the same edge, we look for
-  # the best link by calculating the interior angles with all connections
-  if (length(best_link) == 0 || !flow_mode) {
-    linked_nodes <- get_linked_nodes(node, linked_segs, segments)
-    angles <- interior_angle(nodes[node, ],
-                             nodes[opposite_node, , drop = FALSE],
-                             nodes[linked_nodes, , drop = FALSE])
-    best_link <- get_best_link(angles, linked_segs, angle_threshold)
-  }
-  return(best_link)
 }
 
 #' @noRd
