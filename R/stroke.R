@@ -113,7 +113,7 @@ get_links <- function(segments) {
 #' @noRd
 best_link <- function(nodes, segments, links, edge_ids, flow_mode,
                       angle_threshold = 0) {
-  
+
   get_linked_segments <- function(segment_id, node_id) {
     # find the segments connected to the given one via the given node
     # 1. find all segments connected to the node
@@ -123,7 +123,7 @@ best_link <- function(nodes, segments, links, edge_ids, flow_mode,
     linked_segments <- segs[!is_current_segment]
     return(linked_segments)
   }
-  
+
   get_linked_nodes <- function(node_id, segment_id) {
     # find the node connected to the given one via the given segment(s)
     # 1. get the nodes that are part of the given segment(s)
@@ -134,17 +134,17 @@ best_link <- function(nodes, segments, links, edge_ids, flow_mode,
     is_current_node <- nds %in% node_id
     linked_nodes <- nds[!is_current_node]
     return(linked_nodes)
-  }  
-  
+  }
+
   find_best_link <- function(node, opposite_node, current_segment) {
     linked_segs <- get_linked_segments(current_segment, node)
-    
+
     get_link_on_same_edge <- function(current_segment, edge_ids) {
-        is_same_edge <- edge_ids[linked_segs] == edge_ids[current_segment]
-        link_on_same_edge <- linked_segs[is_same_edge]
-        return(link_on_same_edge)
+      is_same_edge <- edge_ids[linked_segs] == edge_ids[current_segment]
+      link_on_same_edge <- linked_segs[is_same_edge]
+      return(link_on_same_edge)
     }
-    
+
     # if in flow mode, we look for a link on the same edge
     if (flow_mode) {
       best_link <- get_link_on_same_edge(current_segment, edge_ids)
@@ -251,14 +251,14 @@ merge_lines <- function(nodes, segments, links, edge_ids,
 
   traverse_segments <- function(node, link, stroke_label) {
     get_next <- function() {
-      # find the node and segment connected to the current ones via the given link
+      # find node and segment connected to the current ones via the given link
       # 1. get the nodes and segments connected to the given link
       nodes <- segments[link, ]
       segs <- links[link, ]
       # 2. identify the position of the current node in the arrays (the current
       #    segment will be in the same position
       is_current <- nodes == node
-      # 3. exclude the current node and segment from the respective lists to find
+      # 3. exclude  current node and segment from the respective lists to find
       #    the new elements
       return(list(node = nodes[!is_current], link = segs[!is_current]))
     }
@@ -275,7 +275,7 @@ merge_lines <- function(nodes, segments, links, edge_ids,
     return(list(stroke = stroke, is_segment_used = is_segment_used,
                 stroke_labels = stroke_labels))
   }
-  
+
   to_linestring <- function(node_id) {
     points <- nodes[node_id, ]
     linestring <- sfheaders::sfc_linestring(points, x = "x", y = "y")
