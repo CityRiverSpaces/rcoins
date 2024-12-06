@@ -240,6 +240,7 @@ cross_check_links <- function(best_links) {
   return(links)
 }
 
+#' @noRd
 to_linestring <- function(stroke, nodes) {
   # extract the sequence of the nodes forming the stroke (with duplicates)
   segs <- segments[stroke, , drop = FALSE]
@@ -274,6 +275,7 @@ to_linestring <- function(stroke, nodes) {
   return(linestring)
 }
 
+#' @noRd
 traverse_segments <- function(stroke, node, link, can_reuse_segments,
                               segments, links, is_segment_used) {
 
@@ -301,6 +303,7 @@ traverse_segments <- function(stroke, node, link, can_reuse_segments,
   return(stroke)
 }
 
+#' @noRd
 merge_lines <- function(nodes, segments, links, edge_ids,
                         from_edge = NULL, attributes = FALSE, crs = NULL) {
   is_segment_used <- array(FALSE, dim = nrow(segments))
