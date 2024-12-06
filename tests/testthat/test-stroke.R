@@ -31,7 +31,7 @@ test_that("a stroke is found in a very simple network", {
 
 test_that("a ring is recognized as a stroke", {
   sfc <- sf::st_sfc(l2, l4, l6, l7)
-  expected <- sf::st_sfc(sf::st_linestring(c(p3, p6, p5, p2, p3)))
+  expected <- sf::st_sfc(sf::st_linestring(c(p2, p3, p6, p5, p2)))
   actual <- stroke(sfc)
   expect_setequal(actual, expected)
 })
@@ -145,7 +145,7 @@ test_that("edges are not split if flow_mode is true", {
 
 test_that("a ring is recognized as a stroke also in flow_mode", {
   sfc <- sf::st_sfc(l2, l4, l6, l7)
-  expected <- sf::st_sfc(sf::st_linestring(c(p3, p6, p5, p2, p3)))
+  expected <- sf::st_sfc(sf::st_linestring(c(p2, p3, p6, p5, p2)))
   actual <- stroke(sfc, flow_mode = TRUE)
   expect_setequal(actual, expected)
 })
@@ -191,7 +191,7 @@ test_that("attributes can't be returned if edge is specified", {
 
 test_that("a ring is recognized when from_edge is specified", {
   sfc <- sf::st_sfc(l2, l4, l6, l7)
-  expected <- sf::st_sfc(sf::st_linestring(c(p3, p6, p5, p2, p3)))
+  expected <- sf::st_sfc(sf::st_linestring(c(p2, p3, p6, p5, p2)))
   actual <- stroke(sfc, from_edge = 1)
   expect_setequal(actual, expected)
 })
