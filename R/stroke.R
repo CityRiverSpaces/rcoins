@@ -44,10 +44,10 @@ stroke <- function(edges, angle_threshold = 0, attributes = FALSE,
   # split the edges into their constituent points
   edge_pts <- sfheaders::sfc_to_df(edges_sfc)
 
-  # find unique points ("nodes") and assign them IDs
+  # find unique points ("nodes")
   nodes <- unique_nodes(edge_pts)
 
-  # build array of line segments, referring to points using their IDs
+  # build array of line segments, referring to points using the node IDs
   line_segments <- to_line_segments(edge_pts, nodes)
   segments <- line_segments$segments
   edge_ids <- line_segments$edge_id
@@ -73,17 +73,22 @@ stroke <- function(edges, angle_threshold = 0, attributes = FALSE,
               crs)
 }
 
-#' Find unique nodes and label them with IDs
+#' Find unique nodes
 #' @noRd
 #' @importFrom rlang .data
 unique_nodes <- function(edge_points) {
   nodes <- dplyr::distinct(edge_points, .data$x, .data$y)
-  nodes$node_id <- seq_len(nrow(nodes))
+  # convert to matrix for faster indexing
+  nodes <- as.matrix(nodes[c("x", "y")])
   return(nodes)
 }
 
 #' @noRd
 to_line_segments <- function(points, nodes) {
+  # label nodes with IDs
+  node_id <- seq_len(nrow(nodes))
+  nodes <- as.data.frame(cbind(nodes, node_id))
+
   # label all the points using the node IDs
   points <- dplyr::left_join(points, nodes, by = c("x", "y"))
 
