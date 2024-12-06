@@ -240,6 +240,67 @@ cross_check_links <- function(best_links) {
   return(links)
 }
 
+to_linestring <- function(stroke, nodes) {
+  # extract the sequence of the nodes forming the stroke (with duplicates)
+  segs <- segments[stroke, , drop = FALSE]
+  if (nrow(segs) > 1) {
+    # get all but the last segment in the stroke (i.e. the "target" segments)
+    targets <- segs[-nrow(segs), , drop = FALSE]
+    # get the stroke segments that immediately follow the targets (these are all
+    # but the first segment in the stroke)
+    linked <- segs[-1, , drop = FALSE]
+    # for each pair of target/linked segments, find the duplicate nodes (we
+    # check both ends of the linked segments). The sequence of repeated nodes
+    # makes up the body of the stroke
+    is_duplicate <- targets == linked[, 1] | targets == linked[, 2]
+    # transpose both `targets` and `is_duplicate`, so that the duplicate nodes
+    # appear in the correct order when applying the mask (the "segment"
+    # dimension should run along the rows)
+    repeated_nodes <- t(targets)[t(is_duplicate)]
+    # we now have the body of the stroke, identify the first and last nodes
+    first_seg <- segs[1, ]
+    start <- first_seg[first_seg != repeated_nodes[1]]
+    last_seg <- segs[nrow(segs), ]
+    end <- last_seg[last_seg != repeated_nodes[length(repeated_nodes)]]
+    # concatenate the sequence of nodes
+    node_ids <- c(start, repeated_nodes, end)
+  } else {
+    # if we have a single segment, its two nodes already makes up the stroke
+    node_ids <- segs
+  }
+  # build the linestring geometry from the sequence of nodes
+  points <- nodes[node_ids, ]
+  linestring <- sfheaders::sfc_linestring(points, x = "x", y = "y")
+  return(linestring)
+}
+
+traverse_segments <- function(stroke, node, link, can_reuse_segments,
+                              segments, links, is_segment_used) {
+
+  get_next <- function(node, link) {
+    # find node and segment connected to the current ones via the given link
+    # 1. get the nodes and segments connected to the given link
+    nodes <- segments[link, ]
+    segs <- links[link, ]
+    # 2. identify the position of the current node in the arrays (the current
+    #  segment will be in the same position
+    is_current <- nodes == node
+    # 3. exclude current node and segment from the respective lists to find
+    #  the new elements
+    return(list(node = nodes[!is_current], link = segs[!is_current]))
+  }
+
+  while (TRUE) {
+    if (is.na(link) || (link %in% stroke) ||
+          (is_segment_used[link] && !can_reuse_segments)) break
+    stroke <- c(stroke, link)
+    new <- get_next(node, link)
+    node <- new$node
+    link <- new$link
+  }
+  return(stroke)
+}
+
 merge_lines <- function(nodes, segments, links, edge_ids,
                         from_edge = NULL, attributes = FALSE, crs = NULL) {
   is_segment_used <- array(FALSE, dim = nrow(segments))
@@ -254,66 +315,30 @@ merge_lines <- function(nodes, segments, links, edge_ids,
     can_reuse_segments <- TRUE
   }
 
-  traverse_segments <- function(node, link, stroke_label) {
-    get_next <- function() {
-      # find node and segment connected to the current ones via the given link
-      # 1. get the nodes and segments connected to the given link
-      nodes <- segments[link, ]
-      segs <- links[link, ]
-      # 2. identify the position of the current node in the arrays (the current
-      #    segment will be in the same position
-      is_current <- nodes == node
-      # 3. exclude  current node and segment from the respective lists to find
-      #    the new elements
-      return(list(node = nodes[!is_current], link = segs[!is_current]))
-    }
-    stroke <- c()
-    while (TRUE) {
-      if (is.na(link) || (is_segment_used[link] && !can_reuse_segments)) break
-      stroke_labels[edge_ids[link]] <- stroke_label
-      new <- get_next()
-      is_segment_used[link] <- TRUE
-      node <- new$node
-      link <- new$link
-      stroke <- c(node, stroke)
-    }
-    return(list(stroke = stroke, is_segment_used = is_segment_used,
-                stroke_labels = stroke_labels))
-  }
-
-  to_linestring <- function(node_id) {
-    points <- nodes[node_id, ]
-    linestring <- sfheaders::sfc_linestring(points, x = "x", y = "y")
-    return(linestring)
-  }
-
   istroke <- 1
   for (iseg in segment_ids) {
     if (is_segment_used[iseg]) next
 
-    stroke <- segments[iseg, ]
-    is_segment_used[iseg] <- TRUE
-    stroke_labels[edge_ids[iseg]] <- istroke
+    stroke <- c(iseg)
 
-    # traverse forwards from the start node
-    node  <- segments[iseg, "start"]
-    link <- links[iseg, "start"]
-    forward_result <- traverse_segments(node, link, istroke)
-    forward_stroke <- forward_result$stroke
-    is_segment_used <- forward_result$is_segment_used
-    stroke_labels <- forward_result$stroke_labels
-
-    # traverse backwards from the end node
+    # traverse forwards from the end node of the current segment
     node  <- segments[iseg, "end"]
     link <- links[iseg, "end"]
-    backward_result <- traverse_segments(node, link, istroke)
-    backward_stroke <- rev(backward_result$stroke)
-    is_segment_used <- backward_result$is_segment_used
-    stroke_labels <- backward_result$stroke_labels
+    stroke <- traverse_segments(stroke, node, link, can_reuse_segments,
+                                segments, links, is_segment_used)
 
-    # combine strokes and add to results
-    stroke <- c(forward_stroke, stroke, backward_stroke)
-    strokes <- c(strokes, to_linestring(stroke))
+    # revert the stroke to traverse backwards from the start node of the
+    # current segment, then revert it back to the original direction
+    node  <- segments[iseg, "start"]
+    link <- links[iseg, "start"]
+    stroke <- rev(stroke)
+    stroke <- traverse_segments(stroke, node, link, can_reuse_segments,
+                                segments, links, is_segment_used)
+    stroke <- rev(stroke)
+
+    is_segment_used[stroke] <- TRUE
+    stroke_labels[edge_ids[stroke]] <- istroke
+    strokes <- c(strokes, to_linestring(stroke, nodes))
     istroke <- istroke + 1
   }
 
