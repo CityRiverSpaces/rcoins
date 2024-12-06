@@ -190,8 +190,6 @@ test_that("attributes can't be returned if edge is specified", {
 })
 
 test_that("a ring is recognized when from_edge is specified", {
-  # This is currently an infinite loop
-  skip_on_ci()
   sfc <- sf::st_sfc(l2, l4, l6, l7)
   expected <- sf::st_sfc(sf::st_linestring(c(p3, p6, p5, p2, p3)))
   actual <- stroke(sfc, from_edge = 1)
