@@ -241,7 +241,7 @@ cross_check_links <- function(best_links) {
 }
 
 #' @noRd
-to_linestring <- function(stroke, nodes) {
+to_linestring <- function(stroke, segments, nodes) {
   # extract the sequence of the nodes forming the stroke (with duplicates)
   segs <- segments[stroke, , drop = FALSE]
   if (nrow(segs) > 1) {
@@ -341,7 +341,7 @@ merge_lines <- function(nodes, segments, links, edge_ids,
 
     is_segment_used[stroke] <- TRUE
     stroke_labels[edge_ids[stroke]] <- istroke
-    strokes <- c(strokes, to_linestring(stroke, nodes))
+    strokes <- c(strokes, to_linestring(stroke, segments, nodes))
     istroke <- istroke + 1
   }
 
