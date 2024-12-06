@@ -141,18 +141,18 @@ best_link <- function(nodes, segments, links, edge_ids, flow_mode,
     return(linked_nodes)
   }
 
+  get_link_on_same_edge <- function(linked_segs, current_segment) {
+    is_same_edge <- edge_ids[linked_segs] == edge_ids[current_segment]
+    link_on_same_edge <- linked_segs[is_same_edge]
+    return(link_on_same_edge)
+  }
+
   find_best_link <- function(node, opposite_node, current_segment) {
     linked_segs <- get_linked_segments(current_segment, node)
 
-    get_link_on_same_edge <- function(current_segment, edge_ids) {
-      is_same_edge <- edge_ids[linked_segs] == edge_ids[current_segment]
-      link_on_same_edge <- linked_segs[is_same_edge]
-      return(link_on_same_edge)
-    }
-
     # if in flow mode, we look for a link on the same edge
     if (flow_mode) {
-      best_link <- get_link_on_same_edge(current_segment, edge_ids)
+      best_link <- get_link_on_same_edge(linked_segs, current_segment)
     }
     # if not in flow mode or if no link is found on the same edge, we look for
     # the best link by calculating the interior angles with all connections
