@@ -1,13 +1,3 @@
-get_utm_zone <- function(x) {
-  bb <- sf::st_bbox(x)
-
-  centroid_long <- (bb[["xmin"]] + bb[["xmax"]]) / 2
-  centroid_lat <- (bb[["ymin"]] + bb[["ymax"]]) / 2
-  base <- if (centroid_lat >= 0) 32600 else 32700
-  epsg_code <- base + floor((centroid_long + 180) / 6) + 1
-  return(epsg_code)
-}
-
 get_osm_bb <- function(city_name) {
   bb <- osmdata::getbb(city_name)
   bb <- bb |> as.vector()
@@ -57,13 +47,11 @@ get_osm_river <- function(river_name, bb, crs) {
     sf::st_transform(crs) |>
     sf::st_geometry()
 
-  return(list(centerline = river_centerline))
+  return(river_centerline)
 }
 
-get_osmdata <- function(city_name, river_name, crs = NULL, buffer = NULL) {
+get_osmdata <- function(city_name, river_name, crs, buffer = NULL) {
   bb <- get_osm_bb(city_name)
-
-  if (is.null(crs)) crs <- get_utm_zone(bb)
 
   if (!is.null(buffer)) {
     bb <- bb |>
@@ -78,10 +66,9 @@ get_osmdata <- function(city_name, river_name, crs = NULL, buffer = NULL) {
   river <- get_osm_river(river_name, bb, crs)
 
   osm_data <- list(
-    name = city_name,
     geom = list(
       bb = bb,
-      river_centerline = river$centerline,
+      river_centerline = river
       streets = streets
     )
   )
@@ -94,10 +81,10 @@ get_osmdata <- function(city_name, river_name, crs = NULL, buffer = NULL) {
 city_name <- "Bucharest"
 river_name <- "Dâmbovița"
 epsg_code <- 32635
-bbox_buffer <- 2000
+bbox_buffer <- 2000 # m
 
 # Fetch the data
-test_city <- get_osmdata(city_name, river_name, crs = epsg_code, buffer = bbox_buffer)
+bucharest <- get_osmdata(city_name, river_name, crs = epsg_code, buffer = bbox_buffer)
 
 # Fix encoding issue in the WKT string of city boundary
 fix_wkt_encoding <- function(x) {
@@ -105,7 +92,7 @@ fix_wkt_encoding <- function(x) {
   sf::st_crs(x)$wkt <- gsub("°|º", "\\\u00b0", wkt)
   x
 }
-test_city <- lapply(test_city$geom, fix_wkt_encoding)
+bucharest <- lapply(bucharest, fix_wkt_encoding)
 
 # Save as package data
-usethis::use_data(test_city, overwrite = TRUE)
+usethis::use_data(bucharest, overwrite = TRUE)
