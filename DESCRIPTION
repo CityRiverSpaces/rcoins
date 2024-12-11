@@ -24,3 +24,4 @@ Imports:
     sfheaders
 Depends: 
     R (>= 2.10)
+LazyData: true
