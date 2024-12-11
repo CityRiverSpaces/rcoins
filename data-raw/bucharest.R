@@ -1,11 +1,12 @@
 library(dplyr)
+library(osmdata)
 library(rlang)
 library(sf)
 library(usethis)
 
 
 get_osm_bb <- function(city_name) {
-  bb <- osmdata::getbb(city_name)
+  bb <- getbb(city_name)
   bb <- bb |> as.vector()
   names(bb) <- c("xmin", "ymin", "xmax", "ymax")
   bb <- st_bbox(bb, crs = 4326)
@@ -14,9 +15,9 @@ get_osm_bb <- function(city_name) {
 
 osmdata_as_sf <- function(key, value, bb) {
   bb |>
-    osmdata::opq() |>
-    osmdata::add_osm_feature(key = key, value = value) |>
-    osmdata::osmdata_sf()
+    opq() |>
+    add_osm_feature(key = key, value = value) |>
+    osmdata_sf()
 }
 
 get_osm_streets <- function(bb, crs, highway_values = NULL) {
