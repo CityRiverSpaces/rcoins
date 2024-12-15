@@ -1,0 +1,36 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: rcoins
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Francesco
+    family-names: Nattino
+    email: f.nattino@esciencecenter.nl
+    affiliation: Netherlands eScience Center
+    orcid: 'https://orcid.org/0000-0003-3286-0139'
+  - given-names: Claudiu
+    family-names: Forgaci
+    email: c.forgaci@tudelft.nl
+    affiliation: Delft University of Technology
+    orcid: 'https://orcid.org/0000-0003-3218-5102'
+  - given-names: Fakhereh
+    family-names: Alidoost
+    email: f.alidoost@esciencecenter.nl
+    affiliation: Netherlands eScience Center
+    orcid: 'https://orcid.org/0000-0001-8407-6472'
+repository-code: 'https://github.com/CityRiverSpaces/rcoins'
+url: 'https://cityriverspaces.github.io/rcoins'
+abstract: >-
+  Identify continuous lines in a network using an approach
+  based on the Continuity in Steet Network (COINS) method.
+keywords:
+  - R
+  - COINS
+  - network
+  - spatial
+license: Apache-2.0
