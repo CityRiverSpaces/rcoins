@@ -64,7 +64,7 @@ crossing_edges <- which(st_intersects(streets,
                                       sparse = FALSE))
 
 # Trace continuous streets crossing the river
-continuous_streets_crossing <- stroke(streets, from_edge = crossing_edges, 
+continuous_streets_crossing <- stroke(streets, from_edge = crossing_edges,
                                       angle_threshold = 120)
 ```
 
