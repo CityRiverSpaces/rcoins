@@ -1,0 +1,25 @@
+url: https://cityriverspaces.github.io/rcoins/
+template:
+  bootstrap: 5
+authors:
+  sidebar:
+    roles: [aut, cre]
+articles:
+- title: Articles
+  navbar: ~
+  contents:
+  - using-rcoins
+navbar:
+  structure:
+    left: [home, reference, articles, news]
+    right: [github]
+  components:
+    articles:
+      text: Articles
+      menu:
+        - text: Tracing continuous streets using rcoins
+          href: articles/using-rcoins.html
+news:
+  one_page: true
+  
+  

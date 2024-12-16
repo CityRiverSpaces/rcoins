@@ -10,6 +10,8 @@ Authors@R: c(
   )
 Description: Identify continuous street strokes in a network
 License: Apache License (>= 2)
+URL: https://cityriverspaces.github.io/rcoins/
+BugReports: https://github.com/CityRiverSpaces/rcoins/issues
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
