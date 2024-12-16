@@ -65,13 +65,18 @@ crossing_edges <- which(st_intersects(streets,
                                       sparse = FALSE))
 
 # Trace continuous streets crossing the river
-continuous_streets_crossing <- stroke(streets, from_edge = crossing_edges)
+continuous_streets_crossing <- stroke(streets, from_edge = crossing_edges, 
+                                      angle_threshold = 120)
 ```
+
+Note that the input argument `angle_threshold` sets the minimum internal angle between consecutive line segments that can be considered part of a continuous stroke.
 
 We plot the street network and emphasize the continuous streets crossing the river.
 
 ```{r echo=FALSE}
 ggplot() +
+  geom_sf(data = river_centerline, linewidth = 1, colour = "blue") +
+  geom_sf(data = streets, linewidth = 0.2, colour = "black") +
   geom_sf(data = continuous_streets_crossing, linewidth = 2, colour = "red") +
   xlim(418500, 437500) +
   ylim(4909800, 4931500) +
@@ -83,15 +88,11 @@ ggplot() +
 
 ## Maintaining the initial structure
 
-The `flow_mode` argument allows us to maintain the initial structure of the streets. With `flow_mode = FALSE`, the function will split the streets in individual segments and calculate the continuous streets purely based on minimum angle deviations with `angle_threshold`. With `flow_mode = TRUE`, the function will not break the initial line strings. This is necessary when we want to maintain the attributes of the initial linestrings in the resulting strokes.
+The `flow_mode` argument allows us to maintain the initial structure of the streets. With `flow_mode = FALSE` (the default), the function will split the initial streets in individual line segments and calculate the continuous streets purely based on minimum angle deviations. With `flow_mode = TRUE`, the function will not break the initial line strings, but only group and connect them on the basis of minimum angle deviations.
 
 <!-- Question: is there a situation when we want `flow_mode = TRUE` without `attribute_mode = TRUE`? If not, we may want to drop this argument, or at least not present it in the vignette. -->
 
 ## Tracing with attributes
 
-By enabling `flow_mode` and `attribute` arguments, we can maintain the attributes of the input network. This is useful if we want to keep attributes such as degree of the initial streets ("primary", "secondary", "tertiary", etc.) in the resulting continuous streets to calculate, for instance, the relationship between street degree and street length.
-
-```{r}
-# TODO add code to demo how to maintain the attributes of the initial streets
-```
+By enabling `flow_mode` and `attributes` arguments, `stroke` will still group streets on the basis of minimum-angle connectivity, but return group labels instead of the new aggregated geometries. This is useful if we want to keep attributes such as degree of the initial streets ("primary", "secondary", "tertiary", etc.) in the resulting continuous streets to calculate, for instance, the relationship between street degree and street length.
 
