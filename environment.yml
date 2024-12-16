@@ -10,6 +10,7 @@ dependencies:
   - r-sf
   - r-sfheaders
 # Suggests
+  - r-osmdata
   - r-sfnetworks
   - r-testthat >=3.0.0
 # Others
