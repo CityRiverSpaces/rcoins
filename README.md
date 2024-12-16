@@ -67,7 +67,7 @@ plot(sf::st_geometry(streets),
 
 </details>
 
-<img src="./img/streets.png" alt="Bucharest streets" width="500"/>
+<img src="man/figures/streets.png" alt="Bucharest streets" width="500"/>
 
 Determine continuous lines in the network as:
 
@@ -87,7 +87,7 @@ plot(continuous_streets,
 
 </details>
 
-<img src="./img/continuous-streets.png" alt="Bucharest continuous streets" width="500"/>
+<img src="man/figures/continuous-streets.png" alt="Bucharest continuous streets" width="500"/>
 
 [osm]: https://www.openstreetmap.org/
 
