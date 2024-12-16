@@ -1,0 +1,17 @@
+name: rcoins
+channels:
+  - conda-forge
+  - r
+dependencies:
+  - r-base >=4.3
+  - r-devtools
+# Imports
+  - r-dplyr
+  - r-sf
+  - r-sfheaders
+# Suggests
+  - r-osmdata
+  - r-sfnetworks
+  - r-testthat >=3.0.0
+# Others
+  - r-lintr

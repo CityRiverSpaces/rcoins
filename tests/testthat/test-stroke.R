@@ -21,6 +21,10 @@ l7 <- sf::st_linestring(c(p5, p6))
 
 test_that("a stroke is found in a very simple network", {
   sfc <- sf::st_sfc(l1, l2, l3)
+  #           p4
+  #         /
+  # p1 - p2 - p3
+
   expected <- sf::st_sfc(sf::st_linestring(c(p1, p2, p3)), l3)
   actual <- stroke(sfc)
   expect_setequal(actual, expected)
@@ -75,10 +79,21 @@ test_that("multilinestrings are not supported", {
 })
 
 test_that("proper attributes are returned for a very simple network", {
-  skip(message = "attribute mode to be implemented")
   sfc <- sf::st_sfc(l1, l2, l3)
   expected <- as.integer(c(1, 1, 2))
   actual <- stroke(sfc, attributes = TRUE, flow_mode = TRUE)
+  expect_setequal(actual, expected)
+})
+
+test_that("proper attributes are returned for a more complex network", {
+  # p1 - p2  p3
+  #         \ |
+  #           p5 - p6
+  sfc <- sf::st_sfc(l1, l4, l5, l7)
+  expected <- c(1, 1, 2, 1)
+  actual <- stroke(
+    sfc, angle_threshold = 0, attributes = TRUE, flow_mode = TRUE
+  )
   expect_setequal(actual, expected)
 })
 
@@ -104,15 +119,14 @@ test_that("a more complex network with threshold does not form strokes", {
 })
 
 test_that("attributes cannot be returned if not in flow mode", {
-  skip(message = "attribute mode to be implemented")
   sfc <- sf::st_sfc(l1, l2)
   expect_error(stroke(sfc, attributes = TRUE, flow_mode = FALSE),
                "Stroke attributes can be returned only if `flow_mode = TRUE`)")
 })
 
 test_that("edges can be split if flow_mode is false", {
-  l1 <- sf::st_linestring(c(p1, p2, p5))
-  sfc <- sf::st_sfc(l1, l2)
+  new_l1 <- sf::st_linestring(c(p1, p2, p5))
+  sfc <- sf::st_sfc(new_l1, l2)
   expected <- sf::st_sfc(sf::st_linestring(c(p1, p2, p3)),
                          sf::st_linestring(c(p2, p5)))
   actual <- stroke(sfc, flow_mode = FALSE)
@@ -120,38 +134,51 @@ test_that("edges can be split if flow_mode is false", {
 })
 
 test_that("edges are not split if flow_mode is true", {
-  skip(message = "flow mode to be implemented")
-  l1 <- sf::st_linestring(c(p1, p2, p5))
-  sfc <- sf::st_sfc(l1, l2)
+  new_l1 <- sf::st_linestring(c(p1, p2, p5))
+  sfc <- sf::st_sfc(new_l1, l2)
+  # p1 - p2 - p3
+  #         \
+  #           p5
   expected <- sfc
   actual <- stroke(sfc, flow_mode = TRUE)
   expect_setequal(actual, expected)
 })
 
 test_that("strokes can be formed starting from a given edge", {
-  skip(message = "stroke from edge to be implemented")
-  l1 <- sf::st_linestring(c(p1, p2, p3))
-  sfc <- sf::st_sfc(l1, l4, l7)
+  new_l1 <- sf::st_linestring(c(p1, p2, p3))
+  sfc <- sf::st_sfc(new_l1, l4, l7)
+  # p1 - p2 - p3
+  #         \
+  #           p5 - p6
   expected <- sf::st_sfc(sf::st_linestring(c(p1, p2, p5, p6)))
-  actual <- stroke(sfc, flow_mode = FALSE, from_edge = 3)
+  actual <- stroke(sfc, flow_mode = FALSE, from_edge = list(3))
   expect_setequal(actual, expected)
 })
 
-test_that("strokes can be formed starting from a given line segment", {
-  skip(message = "stroke from edge to be implemented")
-  l1 <- sf::st_linestring(c(p1, p2, p3))
-  l2 <- sf::st_linestring(c(p2, p5, p6))
-  sfc <- sf::st_sfc(l1, l2)
-  expected <- sf::st_sfc(sf::st_linestring(c(p1, p2, p5, p6)))
-  actual <- stroke(sfc, flow_mode = FALSE,
-                   from_edge = sf::st_linestring(c(p5, p6)))
+test_that("strokes can be formed starting from a given a list of edge ids", {
+  new_l1 <- sf::st_linestring(c(p1, p2, p3))
+  sfc <- sf::st_sfc(new_l1, l4, l7)
+  stroke_1 <- sf::st_linestring(c(p1, p2, p3))
+  stroke_2 <- sf::st_linestring(c(p1, p2, p5, p6))
+  expected <- sf::st_sfc(stroke_1, stroke_2)
+  actual <- stroke(sfc, flow_mode = FALSE, from_edge = list(1, 3))
   expect_setequal(actual, expected)
 })
 
-test_that("attributes can be returned if edge is specified in flow mode", {
-  skip(message = "flow mode to be implemented")
+test_that("same strokes can be formed when one of the edges is reversed", {
+  new_l1 <- sf::st_linestring(c(p1, p2, p3))
+  # reverse one of the edges
+  new_l4 <- sf::st_linestring(c(p5, p2))
+  sfc <- sf::st_sfc(new_l1, new_l4, l7)
+  stroke_1 <- sf::st_linestring(c(p1, p2, p3))
+  stroke_2 <- sf::st_linestring(c(p6, p5, p2, p1))
+  expected <- sf::st_sfc(stroke_1, stroke_2)
+  actual <- stroke(sfc, flow_mode = FALSE, from_edge = list(1, 2))
+  expect_setequal(actual, expected)
+})
+
+test_that("attributes can't be returned if edge is specified", {
   sfc <- sf::st_sfc(l1, l2, l5, l7)
-  expected <- as.integer(c(1, NA, 1, 1))
-  actual <- stroke(sfc, attribute = TRUE, flow_mode = TRUE, from_edge = 3)
-  expect_setequal(actual, expected)
+  expect_error(stroke(sfc, attribute = TRUE, flow_mode = TRUE, from_edge = 3),
+               "from_edge is not compatible with attributes or flow_mode")
 })
