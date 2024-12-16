@@ -48,12 +48,48 @@ Rscript -e 'devtools::install()'
 
 ## Example
 
-This is a basic example which shows you how to solve a common problem:
+Given the street network of the city of Bucharest (data source: [OpenStreetMap][osm])
 
 ``` r
 library(rcoins)
-## basic example code
+streets <- bucharest$streets
 ```
+
+<details>
+
+<summary> Plot streets </summary>
+
+``` r
+plot(sf::st_geometry(streets),
+     col = sf::sf.colors(n = nrow(streets), categorical = TRUE),
+     lwd = 5, xlim = c(418500, 437500), ylim = c(4909800, 4931500))
+```
+
+</details>
+
+<img src="./img/streets.png" alt="Bucharest streets" width="500"/>
+
+Determine continuous lines in the network as:
+
+``` r
+continuous_streets <- stroke(streets)
+```
+
+<details>
+
+<summary> Plot continuous streets </summary>
+
+``` r
+plot(continuous_streets,
+     col = sf::sf.colors(n = length(continuous_streets), categorical = TRUE),
+     lwd = 5, xlim = c(418500, 437500), ylim = c(4909800, 4931500))
+```
+
+</details>
+
+<img src="./img/continuous-streets.png" alt="Bucharest continuous streets" width="500"/>
+
+[osm]: https://www.openstreetmap.org/
 
 ## Development
 
