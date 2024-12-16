@@ -40,6 +40,7 @@ continuous_streets <- stroke(streets)
 To visualise the strokes in a more intuitive way, we map the line weight in the plot to the length of the strokes. The thicker a line is, the longer the stroke.
 
 ```{r echo=FALSE}
+length <- sf::st_length(continuous_streets)
 ggplot() +
   geom_sf(data = continuous_streets, aes(linewidth = as.numeric(length))) +
   scale_linewidth_continuous(name = "Continuous lines", range = c(0.1, 1.2)) +
