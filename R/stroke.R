@@ -211,6 +211,22 @@ get_best_link <- function(angles, links, angle_threshold = 0) {
 }
 
 #' @noRd
+cross_check_links <- function(best_links) {
+  links <- array(integer(), dim = dim(best_links))
+  colnames(links) <- c("start", "end")
+
+  is_start_reciprocal <- check_reciprocal(best_links, "start")
+  links[is_start_reciprocal, "start"] <-
+    best_links[is_start_reciprocal, "start"]
+
+  is_end_reciprocal <- check_reciprocal(best_links, "end")
+  links[is_end_reciprocal, "end"] <-
+    best_links[is_end_reciprocal, "end"]
+
+  return(links)
+}
+
+#' @noRd
 check_reciprocal <- function(best_links, side) {
   # find the best link of the best links
   bl <- best_links[best_links[, side], ]
@@ -225,19 +241,54 @@ check_reciprocal <- function(best_links, side) {
 }
 
 #' @noRd
-cross_check_links <- function(best_links) {
-  links <- array(integer(), dim = dim(best_links))
-  colnames(links) <- c("start", "end")
+merge_lines <- function(nodes, segments, links, edge_ids,
+                        from_edge = NULL, attributes = FALSE, crs = NULL) {
+  is_segment_used <- array(FALSE, dim = nrow(segments))
+  stroke_labels <- array(integer(), dim = max(edge_ids))
+  strokes <- sf::st_sfc()
 
-  is_start_reciprocal <- check_reciprocal(best_links, "start")
-  links[is_start_reciprocal, "start"] <-
-    best_links[is_start_reciprocal, "start"]
+  if (is.null(from_edge)) {
+    segment_ids <- seq_len(nrow(segments))
+    can_reuse_segments <- FALSE
+  } else {
+    segment_ids <- which(edge_ids %in% from_edge)
+    can_reuse_segments <- TRUE
+  }
 
-  is_end_reciprocal <- check_reciprocal(best_links, "end")
-  links[is_end_reciprocal, "end"] <-
-    best_links[is_end_reciprocal, "end"]
+  istroke <- 1
+  for (iseg in segment_ids) {
+    if (is_segment_used[iseg]) next
 
-  return(links)
+    stroke <- c(iseg)
+
+    # traverse forwards from the end node of the current segment
+    node  <- segments[iseg, "end"]
+    link <- links[iseg, "end"]
+    stroke <- traverse_segments(stroke, node, link, can_reuse_segments,
+                                segments, links, is_segment_used)
+
+    # revert the stroke to traverse backwards from the start node of the
+    # current segment, then revert it back to the original direction
+    node  <- segments[iseg, "start"]
+    link <- links[iseg, "start"]
+    stroke <- rev(stroke)
+    stroke <- traverse_segments(stroke, node, link, can_reuse_segments,
+                                segments, links, is_segment_used)
+    stroke <- rev(stroke)
+
+    is_segment_used[stroke] <- TRUE
+    stroke_labels[edge_ids[stroke]] <- istroke
+    strokes <- c(strokes, to_linestring(stroke, segments, nodes))
+    istroke <- istroke + 1
+  }
+
+  # only at the end, add CRS
+  sf::st_crs(strokes) <- sf::st_crs(crs)
+  if (attributes) {
+    return(stroke_labels)
+  } else {
+    return(strokes)
+  }
 }
 
 #' @noRd
@@ -301,55 +352,4 @@ traverse_segments <- function(stroke, node, link, can_reuse_segments,
     link <- new$link
   }
   return(stroke)
-}
-
-#' @noRd
-merge_lines <- function(nodes, segments, links, edge_ids,
-                        from_edge = NULL, attributes = FALSE, crs = NULL) {
-  is_segment_used <- array(FALSE, dim = nrow(segments))
-  stroke_labels <- array(integer(), dim = max(edge_ids))
-  strokes <- sf::st_sfc()
-
-  if (is.null(from_edge)) {
-    segment_ids <- seq_len(nrow(segments))
-    can_reuse_segments <- FALSE
-  } else {
-    segment_ids <- which(edge_ids %in% from_edge)
-    can_reuse_segments <- TRUE
-  }
-
-  istroke <- 1
-  for (iseg in segment_ids) {
-    if (is_segment_used[iseg]) next
-
-    stroke <- c(iseg)
-
-    # traverse forwards from the end node of the current segment
-    node  <- segments[iseg, "end"]
-    link <- links[iseg, "end"]
-    stroke <- traverse_segments(stroke, node, link, can_reuse_segments,
-                                segments, links, is_segment_used)
-
-    # revert the stroke to traverse backwards from the start node of the
-    # current segment, then revert it back to the original direction
-    node  <- segments[iseg, "start"]
-    link <- links[iseg, "start"]
-    stroke <- rev(stroke)
-    stroke <- traverse_segments(stroke, node, link, can_reuse_segments,
-                                segments, links, is_segment_used)
-    stroke <- rev(stroke)
-
-    is_segment_used[stroke] <- TRUE
-    stroke_labels[edge_ids[stroke]] <- istroke
-    strokes <- c(strokes, to_linestring(stroke, segments, nodes))
-    istroke <- istroke + 1
-  }
-
-  # only at the end, add CRS
-  sf::st_crs(strokes) <- sf::st_crs(crs)
-  if (attributes) {
-    return(stroke_labels)
-  } else {
-    return(strokes)
-  }
 }
