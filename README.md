@@ -67,6 +67,8 @@ plot(sf::st_geometry(streets),
 
 </details>
 
+![](./img/streets.png)
+
 Determine continuous lines in the network as:
 
 ``` r
@@ -84,6 +86,8 @@ plot(continuous_streets,
 ```
 
 </details>
+
+![](./img/continuous-streets.png)
 
 [osm] : https://www.openstreetmap.org/
 
