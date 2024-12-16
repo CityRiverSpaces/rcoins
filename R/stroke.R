@@ -339,6 +339,7 @@ merge_lines <- function(nodes, segments, links, edge_ids,
                                 segments, links, is_segment_used)
     stroke <- rev(stroke)
 
+    # keep track of edge ids of strokes and add current stroke to strokes 
     is_segment_used[stroke] <- TRUE
     stroke_labels[edge_ids[stroke]] <- istroke
     strokes <- c(strokes, to_linestring(stroke, segments, nodes))
