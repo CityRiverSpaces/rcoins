@@ -5,12 +5,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # [Unreleased]
 
+## Added
+
+- DOI is added to CITATION.cff and README (badge)
+
 ## Fixed
 
 - Fix rendering of package information on the pkgdown website
 
 # Version 0.1.0 - 2024-12-16
 
-## Added 
+## Added
 
 - First release of the package
