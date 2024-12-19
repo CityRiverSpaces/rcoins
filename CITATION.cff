@@ -25,6 +25,9 @@ authors:
     orcid: 'https://orcid.org/0000-0001-8407-6472'
 repository-code: 'https://github.com/CityRiverSpaces/rcoins'
 url: 'https://cityriverspaces.github.io/rcoins'
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.14501804
 abstract: >-
   Identify continuous lines in a network using an approach
   based on the Continuity in Steet Network (COINS) method.
