@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Added
 
 - DOI is added to CITATION.cff and README (badge)
+- Contributing guidelines are added to the package
 
 ## Fixed
 
