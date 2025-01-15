@@ -4,13 +4,12 @@
 #' sequences of edges that form naturally continuous strokes in a network.
 #'
 #' @param edges An object of class \code{\link[sf]{sfc}} (or compatible),
-#' including the edge geometries (should be of type LINESTRING or
-#' MULTILINESTRING).
+#' including the edge geometries (should be of type LINESTRING).
 #'
 #' @param angle_threshold Consecutive line segments can be considered part of
 #' the same stroke if the internal angle they form is larger than
 #' \code{angle_threshold} (in degrees). It should fall in the range
-#' \eqn{0 \leq angle_threshold < 180}.
+#' \code{0 <= angle_threshold < 180}.
 #'
 #' @param attributes If \code{TRUE}, return a label for each edge, representing
 #' the groups each edge belongs to. Only possible for \code{flow_mode = TRUE}.
