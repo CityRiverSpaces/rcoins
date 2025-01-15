@@ -92,6 +92,12 @@ plot(continuous_streets,
 
 [osm]: https://www.openstreetmap.org/
 
+## Contributing
+
+We look very much forward to contributions to the package. See the [Contributing Guide](.github/CONTRIBUTING.md) for further details.
+
+This package is released with a [Contributor Code of Conduct](.github/CODE_OF_CONDUCT.md). By contributing to this project you agree to abide by its terms.
+
 ## Development
 
 When modifying the R source code, load the library as:
