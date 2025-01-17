@@ -1,0 +1,32 @@
+# Workflow derived from https://github.com/marketplace/actions/setup-miniconda#example-3-other-options
+# Need help debugging build failures? Start at https://github.com/r-lib/actions#where-to-find-help
+name: Compare to momepy
+on: [pull_request]
+
+jobs:
+  compare-momepy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash -el {0}
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up conda environment
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          activate-environment: anaconda-client-env
+          environment-file: environment.yml
+          python-version: 3.13
+          auto-activate-base: false
+      - name: Install momepy dependencies
+        run: |
+          conda install geopandas momepy pytest
+          conda info
+          conda list
+
+      - name: Compare rcoins output to momepy output
+        run: |
+          Rscript -e 'devtools::install()'
+          Rscript scripts/compare_momepy/prepare-test-stroke.R
+          python -m pytest -v
