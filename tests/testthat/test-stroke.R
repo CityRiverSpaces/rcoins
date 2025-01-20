@@ -220,7 +220,7 @@ test_that("flow mode does not break edges on a real dataset", {
 
   # compare the grouped edges to the strokes: if identical, this means that
   # the strokes contain full edges, i.e. flow_mode is respected
-  # NOTE: elemet-wise comparison works even if "strokes" consists of only
+  # NOTE: element-wise comparison works even if "strokes" consists of only
   # linestrings, while "edges_merged" includes some multilinestrings
   expect_true(all(strokes == edges_merged))
 })
