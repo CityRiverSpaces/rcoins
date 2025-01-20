@@ -202,7 +202,7 @@ test_that("flow mode does not break edges on a real dataset", {
   strokes <- rcoins::stroke(edges, flow_mode = TRUE)
 
   # find out which of the initial edges are contained in each of the strokes
-  # NOTE: edges included in self-interesecting strokes can be missed by the
+  # NOTE: edges included in self-intersecting strokes can be missed by the
   # following command, if the test fails double check the input!
   contains <- sf::st_contains(strokes, edges)
 
