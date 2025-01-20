@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - DOI is added to CITATION.cff and README (badge)
 - Contributing guidelines are added to the package
+- A test on real (packaged) data is included
+
+## Changed
+
+- Data resized to city boundary (buffer is dropped)
 
 ## Fixed
 

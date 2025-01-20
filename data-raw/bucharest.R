@@ -51,23 +51,15 @@ get_osm_river <- function(river_name, bb, crs) {
   river_centerline <- osmdata_as_sf("waterway", "river", bb)
   river_centerline <- river_centerline$osm_multilines |>
     filter(.data$name == river_name) |>
+    st_filter(st_as_sfc(bb), .predicate = st_intersects) |>
     st_transform(crs) |>
     st_geometry()
 
   return(river_centerline)
 }
 
-get_osmdata <- function(city_name, river_name, crs, buffer = NULL) {
+get_osmdata <- function(city_name, river_name, crs) {
   bb <- get_osm_bb(city_name)
-
-  if (!is.null(buffer)) {
-    bb <- bb |>
-      st_as_sfc() |>
-      st_transform(crs = crs) |>
-      st_buffer(buffer) |>
-      st_transform(crs = 4326) |>
-      st_bbox()
-  }
 
   streets <- get_osm_streets(bb, crs)
   river <- get_osm_river(river_name, bb, crs)
@@ -86,14 +78,12 @@ get_osmdata <- function(city_name, river_name, crs, buffer = NULL) {
 city_name <- "Bucharest"
 river_name <- "Dâmbovița"
 epsg_code <- 32635
-bbox_buffer <- 2000 # m
 
 # Fetch the data
 bucharest <- get_osmdata(
   city_name,
   river_name,
-  crs = epsg_code,
-  buffer = bbox_buffer
+  crs = epsg_code
 )
 
 # Fix encoding issue in the WKT string of city boundary
