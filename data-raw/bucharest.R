@@ -51,7 +51,7 @@ get_osm_river <- function(river_name, bb, crs) {
   river_centerline <- osmdata_as_sf("waterway", "river", bb)
   river_centerline <- river_centerline$osm_multilines |>
     filter(.data$name == river_name) |>
-    st_filter(sf::st_as_sfc(bb), .predicate = sf::st_intersects) |>
+    st_filter(st_as_sfc(bb), .predicate = st_intersects) |>
     st_transform(crs) |>
     st_geometry()
 
