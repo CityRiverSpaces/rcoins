@@ -195,3 +195,32 @@ test_that("a ring is recognized when from_edge is specified", {
   actual <- stroke(sfc, from_edge = 1)
   expect_setequal(actual, expected)
 })
+
+test_that("flow mode does not break edges on a real dataset", {
+  edges <- sf::st_geometry(bucharest$streets)
+
+  strokes <- rcoins::stroke(edges, flow_mode = TRUE)
+
+  # find out which of the initial edges are contained in each of the strokes
+  # NOTE: edges included in self-intersecting strokes can be missed by the
+  # following command, if the test fails double check the input!
+  contains <- sf::st_contains(strokes, edges)
+
+  # merge the groups of edges in (multi)linestrings
+  merge_edges <- function(idx) {
+    union <- sf::st_union(edges[idx])
+    if (sf::st_geometry_type(union) == "LINESTRING") {
+      return(union)
+    } else {
+      return(sf::st_line_merge(union))
+    }
+  }
+  edges_merged <- sf::st_sfc(sapply(contains, merge_edges),
+                             crs = sf::st_crs(edges))
+
+  # compare the grouped edges to the strokes: if identical, this means that
+  # the strokes contain full edges, i.e. flow_mode is respected
+  # NOTE: element-wise comparison works even if "strokes" consists of only
+  # linestrings, while "edges_merged" includes some multilinestrings
+  expect_true(all(strokes == edges_merged))
+})

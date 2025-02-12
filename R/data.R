@@ -2,5 +2,5 @@
 #'
 #' Data extracted from OpenStreetMap for testing the rcoins package.
 #'
-#' @source OpenStreetMap
+#' @source <https://www.openstreetmap.org/about>
 "bucharest"
