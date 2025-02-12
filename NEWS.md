@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - DOI is added to CITATION.cff and README (badge)
 - Contributing guidelines are added to the package
+- Added gitHub action to compare stroke to momepy on pull request
 - A test on real (packaged) data is included
 
 ## Changed
