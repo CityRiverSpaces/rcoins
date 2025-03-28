@@ -197,7 +197,7 @@ test_that("a ring is recognized when from_edge is specified", {
 })
 
 test_that("flow mode does not break edges on a real dataset", {
-  edges <- sf::st_geometry(bucharest$streets)
+  edges <- sf::st_geometry(CRiSpData::bucharest_osm$streets)
 
   strokes <- rcoins::stroke(edges, flow_mode = TRUE)
 

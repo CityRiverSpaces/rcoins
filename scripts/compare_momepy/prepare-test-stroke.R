@@ -2,22 +2,23 @@
 #'
 #' The bucharest data is used for this comparison.
 library(sf)
+library(CRiSpData)
 library(rcoins)
 
 prepare_stroke_data <- function() {
   st_write(
-    bucharest$river,
+    bucharest_osm$river_centerline,
     dsn = "data/bucharest.gpkg",
     layer = "river",
     delete_dsn = TRUE
   )
   st_write(
-    bucharest$streets,
+    bucharest_osm$streets,
     dsn = "data/bucharest.gpkg",
     layer = "streets"
   )
 
-  strokes <- stroke(bucharest$streets)
+  strokes <- stroke(bucharest_osm$streets)
   st_write(
     strokes,
     dsn = "data/bucharest.gpkg",
