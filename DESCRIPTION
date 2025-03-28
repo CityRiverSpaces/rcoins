@@ -19,7 +19,6 @@ Suggests:
     CRiSpData,
     ggplot2,
     knitr,
-    osmdata,
     rmarkdown,
     sfnetworks,
     testthat (>= 3.0.0)
