@@ -1,17 +1,23 @@
 # Workflow derived from https://github.com/marketplace/actions/setup-miniconda#example-3-other-options
 # Need help debugging build failures? Start at https://github.com/r-lib/actions#where-to-find-help
 name: Compare to momepy
+
 on: [pull_request]
+
+permissions: read-all
 
 jobs:
   compare-momepy:
     runs-on: ubuntu-latest
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      R_KEEP_PKG_SOURCE: yes
     defaults:
       run:
         shell: bash -el {0}
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Set up conda environment
         uses: conda-incubator/setup-miniconda@v3
         with:
