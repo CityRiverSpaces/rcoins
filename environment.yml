@@ -7,11 +7,15 @@ dependencies:
   - r-devtools
 # Imports
   - r-dplyr
+  - r-rlang
   - r-sf
   - r-sfheaders
 # Suggests
-  - r-osmdata
+  - r-ggplot2
+  - r-knitr
+  - r-rmarkdown
   - r-sfnetworks
   - r-testthat >=3.0.0
 # Others
   - r-lintr
+# NOTE: CRiSpData must be installed manually: `Rscript -e 'devtools::install_github("CityRiverSpaces/CRiSpData")'`

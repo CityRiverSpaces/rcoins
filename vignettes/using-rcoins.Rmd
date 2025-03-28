@@ -18,13 +18,14 @@ knitr::opts_chunk$set(
 library(rcoins)
 library(sf)
 library(ggplot2)
+library(CRiSpData)  # example data
 ```
 
 In this article we demonstrate how to trace continuous streets using the `stroke()` function. The function takes an `sf` object of streets and returns a new `sf` object with continuous streets.
 
 ```{r}
 # Load streets from example data
-streets <- bucharest$streets
+streets <- bucharest_osm$streets
 ```
 
 ## Tracing on the entire network
@@ -53,11 +54,11 @@ ggplot() +
 
 ## Tracing from specified streets
 
-To trace continuous streets from a given set of streets, we can add the edge indices in the `from_edge` argument. We demonstrate this by tracing all continuous streets crossing river Dâmbovița in Bucharest. We load the river centerline from the package data.
+To trace continuous streets from a given set of streets, we can add the edge indices in the `from_edge` argument. We demonstrate this by tracing all continuous streets crossing river Dâmbovița in Bucharest. We load the river centerline from the example data.
 
 ```{r}
 # Load river centerline from example data
-river_centerline <- bucharest$river_centerline
+river_centerline <- bucharest_osm$river_centerline
 
 crossing_edges <- which(st_intersects(streets,
                                       river_centerline,
