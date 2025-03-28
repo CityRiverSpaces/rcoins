@@ -210,9 +210,9 @@ test_that("flow mode does not break edges on a real dataset", {
   merge_edges <- function(idx) {
     union <- sf::st_union(edges[idx])
     if (sf::st_geometry_type(union) == "LINESTRING") {
-      return(union)
+      union
     } else {
-      return(sf::st_line_merge(union))
+      sf::st_line_merge(union)
     }
   }
   edges_merged <- sf::st_sfc(sapply(contains, merge_edges),

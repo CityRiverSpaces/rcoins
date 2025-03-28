@@ -11,7 +11,7 @@ to_sfc <- function(x) {
   } else {
     sfc <- sf::st_as_sfc(x)
   }
-  return(sfc)
+  sfc
 }
 
 #' @noRd
