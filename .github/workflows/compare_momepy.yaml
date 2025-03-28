@@ -4,8 +4,6 @@ name: Compare to momepy
 
 on: [pull_request]
 
-permissions: read-all
-
 jobs:
   compare-momepy:
     runs-on: ubuntu-latest
