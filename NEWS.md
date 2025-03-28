@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix rendering of package information on the pkgdown website [#42](https://github.com/CityRiverSpaces/rcoins/pull/42)
 - Small fixes to docstrings [#45](https://github.com/CityRiverSpaces/rcoins/pull/45)
 - When an initial set of edges is provided, we do not skip  through segments that we have already considered in other strokes [#48](https://github.com/CityRiverSpaces/rcoins/pull/48)
+- Remove explicit return statement to comply with linting warning [#50](https://github.com/CityRiverSpaces/rcoins/pull/50)
 
 # Version 0.1.0 - 2024-12-16
 
