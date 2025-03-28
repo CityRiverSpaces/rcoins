@@ -256,7 +256,7 @@ merge_lines <- function(nodes, segments, links, edge_ids,
 
   istroke <- 1
   for (iseg in segment_ids) {
-    if (is_segment_used[iseg]) next
+    if (is_segment_used[iseg] && !can_reuse_segments) next
 
     stroke <- c(iseg)
 
