@@ -66,14 +66,15 @@
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://cityriverspaces.github.io/rcoins/">rcoins</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/" class="external-link">sf</a></span><span class="op">)</span></span>
 <span><span class="co">#&gt; Linking to GEOS 3.12.1, GDAL 3.8.4, PROJ 9.4.0; sf_use_s2() is TRUE</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span></code></pre></div>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/CityRiverSpaces/CRiSpData" class="external-link">CRiSpData</a></span><span class="op">)</span>  <span class="co"># example data</span></span></code></pre></div>
 <p>In this article we demonstrate how to trace continuous streets using
 the <code><a href="../reference/stroke.html">stroke()</a></code> function. The function takes an
 <code>sf</code> object of streets and returns a new <code>sf</code>
 object with continuous streets.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Load streets from example data</span></span>
-<span><span class="va">streets</span> <span class="op">&lt;-</span> <span class="va">bucharest</span><span class="op">$</span><span class="va">streets</span></span></code></pre></div>
+<span><span class="va">streets</span> <span class="op">&lt;-</span> <span class="va">bucharest_osm</span><span class="op">$</span><span class="va">streets</span></span></code></pre></div>
 <div class="section level2">
 <h2 id="tracing-on-the-entire-network">Tracing on the entire network<a class="anchor" aria-label="anchor" href="#tracing-on-the-entire-network"></a>
 </h2>
@@ -93,10 +94,10 @@ the longer the stroke.</p>
 <p>To trace continuous streets from a given set of streets, we can add
 the edge indices in the <code>from_edge</code> argument. We demonstrate
 this by tracing all continuous streets crossing river Dâmbovița in
-Bucharest. We load the river centerline from the package data.</p>
+Bucharest. We load the river centerline from the example data.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Load river centerline from example data</span></span>
-<span><span class="va">river_centerline</span> <span class="op">&lt;-</span> <span class="va">bucharest</span><span class="op">$</span><span class="va">river_centerline</span></span>
+<span><span class="va">river_centerline</span> <span class="op">&lt;-</span> <span class="va">bucharest_osm</span><span class="op">$</span><span class="va">river_centerline</span></span>
 <span></span>
 <span><span class="va">crossing_edges</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/geos_binary_pred.html" class="external-link">st_intersects</a></span><span class="op">(</span><span class="va">streets</span>,</span>
 <span>                                      <span class="va">river_centerline</span>,</span>
