@@ -10,11 +10,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - DOI is added to CITATION.cff and README (badge) [#43](https://github.com/CityRiverSpaces/rcoins/pull/43)
 - Contributing guidelines are added to the package [#44](https://github.com/CityRiverSpaces/rcoins/pull/44)
 - Added gitHub action to compare stroke to momepy on pull request [#47](https://github.com/CityRiverSpaces/rcoins/pull/47)
-- A test on real (packaged) data is included [#46](https://github.com/CityRiverSpaces/rcoins/pull/46)
+- A test on real data is included [#46](https://github.com/CityRiverSpaces/rcoins/pull/46)
 
 ## Changed
 
-- Data resized to city boundary (buffer is dropped) [#46](https://github.com/CityRiverSpaces/rcoins/pull/46)
+- Data was first resized to the city boundary (buffer is dropped) [#46](https://github.com/CityRiverSpaces/rcoins/pull/46), then completely removed from the package [#49](https://github.com/CityRiverSpaces/rcoins/pull/49). 
+  We now use data packaged in the [CityRiverSpaces/CRiSpData](https://github.com/CityRiverSpaces/CRiSpData) repository.
 
 ## Fixed
 

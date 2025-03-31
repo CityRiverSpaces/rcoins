@@ -41,10 +41,10 @@ conda env create -f environment.yml
 conda activate rcoins
 ```
 
-Install the development version of rcoins:
+Install the development version of rcoins (include `dependencies = TRUE` to install the example datasets):
 
 ``` shell
-Rscript -e 'devtools::install()'
+Rscript -e 'devtools::install(dependencies = TRUE)'
 ```
 
 ## Example
@@ -52,8 +52,8 @@ Rscript -e 'devtools::install()'
 Given the street network of the city of Bucharest (data source: [OpenStreetMap][osm])
 
 ``` r
-library(rcoins)
-streets <- bucharest$streets
+library(CRiSpData)
+streets <- bucharest_osm$streets
 ```
 
 <details>
@@ -73,6 +73,7 @@ plot(sf::st_geometry(streets),
 Determine continuous lines in the network as:
 
 ``` r
+library(rcoins)
 continuous_streets <- stroke(streets)
 ```
 
