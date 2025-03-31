@@ -41,10 +41,10 @@ conda env create -f environment.yml
 conda activate rcoins
 ```
 
-Install the development version of rcoins:
+Install the development version of rcoins (include `dependencies = TRUE` to install the example datasets):
 
 ``` shell
-Rscript -e 'devtools::install()'
+Rscript -e 'devtools::install(dependencies = TRUE)'
 ```
 
 ## Example
