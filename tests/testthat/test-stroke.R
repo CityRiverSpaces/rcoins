@@ -202,9 +202,12 @@ test_that("flow mode does not break edges on a real dataset", {
   strokes <- rcoins::stroke(edges, flow_mode = TRUE)
 
   # find out which of the initial edges are contained in each of the strokes
-  # NOTE: edges included in self-intersecting strokes can be missed by the
-  # following command, if the test fails double check the input!
+  # NOTE: edges that form self-crossing strokes are missed by the "contains"
+  # relationship. However, they are catched by the "overlaps" relationship,
+  # which is why we run both predicate and merge results
   contains <- sf::st_contains(strokes, edges)
+  overlaps <- sf::st_overlaps(strokes, edges)
+  contains_and_overlaps <- mapply(c, contains, overlaps)
 
   # merge the groups of edges in (multi)linestrings
   merge_edges <- function(idx) {
@@ -215,7 +218,7 @@ test_that("flow mode does not break edges on a real dataset", {
       sf::st_line_merge(union)
     }
   }
-  edges_merged <- sf::st_sfc(sapply(contains, merge_edges),
+  edges_merged <- sf::st_sfc(sapply(contains_and_overlaps, merge_edges),
                              crs = sf::st_crs(edges))
 
   # compare the grouped edges to the strokes: if identical, this means that
