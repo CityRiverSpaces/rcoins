@@ -2,3 +2,4 @@
 ^\.github$
 ^data-raw$
 ^environment\.yml$
+^cran-comments\.md$
