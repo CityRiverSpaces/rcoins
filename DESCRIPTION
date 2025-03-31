@@ -8,7 +8,8 @@ Authors@R: c(
            comment = c(ORCID = "0000-0003-3218-5102")),
     person("Netherlands eScience Center", , , "info@esciencecenter.nl", role = "fnd")
   )
-Description: Identify continuous street strokes in a network
+Description: Identify continuous lines in a spatial network using the Continuity in Street
+    Network (COINS) method <doi:10.1177/2399808320967680>.
 License: Apache License (>= 2)
 URL: https://cityriverspaces.github.io/rcoins/, https://doi.org/10.5281/zenodo.14501805
 BugReports: https://github.com/CityRiverSpaces/rcoins/issues
