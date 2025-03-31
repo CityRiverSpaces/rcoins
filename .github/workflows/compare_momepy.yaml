@@ -31,9 +31,7 @@ jobs:
 
       - name: Compare rcoins output to momepy output
         run: |
-          # install packaged data
-          Rscript -e 'devtools::install_github("CityRiverSpaces/CRiSpData")'
-          # install the current package
-          Rscript -e 'devtools::install(dependencies = FALSE)'
+          # avoid upgrading dependencies already installed via conda
+          Rscript -e 'devtools::install(upgrade = FALSE)'
           Rscript scripts/compare_momepy/prepare-test-stroke.R
           python -m pytest -v
