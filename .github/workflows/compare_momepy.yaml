@@ -32,6 +32,6 @@ jobs:
       - name: Compare rcoins output to momepy output
         run: |
           # avoid upgrading dependencies already installed via conda
-          Rscript -e 'devtools::install(upgrade = FALSE)'
+          Rscript -e 'devtools::install(dependencies = TRUE, upgrade = FALSE)'
           Rscript scripts/compare_momepy/prepare-test-stroke.R
           python -m pytest -v
