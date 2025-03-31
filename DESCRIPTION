@@ -11,7 +11,7 @@ Authors@R: c(
 Description: Identify continuous lines in a spatial network using the Continuity in Street
     Network (COINS) method <doi:10.1177/2399808320967680>.
 License: Apache License (>= 2)
-URL: https://cityriverspaces.github.io/rcoins/, https://doi.org/10.5281/zenodo.14501805
+URL: https://cityriverspaces.github.io/rcoins/, https://doi.org/10.5281/zenodo.14501805, https://github.com/CityRiverSpaces/rcoins
 BugReports: https://github.com/CityRiverSpaces/rcoins/issues
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
