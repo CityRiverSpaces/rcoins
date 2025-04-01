@@ -24,3 +24,10 @@ check_geometry <- function(geometry) {
     stop(sprintf(template, geometry_type[is_not_linestring]))
   }
 }
+
+#' @noRd
+contains_or_overlaps <- function(x, y) {
+  contains <- sf::st_contains(x, y)
+  overlaps <- sf::st_overlaps(x, y)
+  mapply(c, contains, overlaps)
+}

@@ -231,9 +231,3 @@ test_that("flow mode does not break edges on a real dataset", {
   expect_true(all(unlist(edges_merged_in_strokes) == seq_len(length(strokes))))
   expect_true(all(unlist(strokes_in_edges_merged) == seq_len(length(strokes))))
 })
-
-contains_or_overlaps <- function(x, y) {
-  contains <- sf::st_contains(x, y)
-  overlaps <- sf::st_overlaps(x, y)
-  mapply(c, contains, overlaps)
-}
