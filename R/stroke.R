@@ -1,10 +1,13 @@
-#' Identify continuous lines in a network
+#' Identify naturally continuous lines in a spatial network
 #'
-#' Apply the Continuity in Street Network (COINS) method to identify
-#' sequences of edges that form naturally continuous strokes in a network.
+#' Provides functionality to group lines that form naturally continuous lines in
+#' a spatial network. The algorithm implemented is based on the Continuity in
+#' Street Networks (COINS) method <doi:10.1177/2399808320967680>, which
+#' identifies continuous "strokes" in the network as the linestrings that
+#' maximize the angles between consecutive segments.
 #'
 #' @param edges An object of class \code{\link[sf]{sfc}} (or compatible),
-#' including the edge geometries (should be of type LINESTRING).
+#' including the network edge geometries (should be of type LINESTRING).
 #'
 #' @param angle_threshold Consecutive line segments can be considered part of
 #' the same stroke if the internal angle they form is larger than
@@ -24,6 +27,45 @@
 #' @return An object of class \code{\link[sf]{sfc}} (if
 #' \code{attributes = FALSE}), a vector with the same length as \code{edges}
 #' otherwise.
+#'
+#' @examples
+#' library(sf)
+#'
+#' # Setup a simple network
+#'
+#' p1 <- st_point(c(0, 3))
+#' p2 <- st_point(c(2, 1))
+#' p3 <- st_point(c(3, 0))
+#' p4 <- st_point(c(1, 4))
+#' p5 <- st_point(c(3, 2))
+#' p6 <- st_point(c(4, 1))
+#' p7 <- st_point(c(4, 3))
+#' p8 <- st_point(c(5, 3))
+#'
+#' l1 <- st_linestring(c(p1, p2, p5))
+#' l2 <- st_linestring(c(p2, p3))
+#' l3 <- st_linestring(c(p4, p5))
+#' l4 <- st_linestring(c(p5, p6))
+#' l5 <- st_linestring(c(p5, p7))
+#' l6 <- st_linestring(c(p7, p8))
+#'
+#' network_edges <- st_sfc(l1, l2, l3, l4, l5, l6)
+#'
+#' # Identify strokes in the full network with default settings
+#' stroke(network_edges)
+#'
+#' # Set a threshold to the angle between consecutive segments
+#' stroke(network_edges, angle_threshold = 150)
+#'
+#' # Identify strokes in flow mode (do not break initial edges)
+#' stroke(network_edges, flow_mode = TRUE)
+#'
+#' # Instead of returning stroke geometries, return stroke labels
+#' stroke(network_edges, flow_mode = TRUE, attributes = TRUE)
+#'
+#' # Identify strokes that continue one (or a subset) of edges
+#' stroke(network_edges, from_edge = 2)
+#' stroke(network_edges, from_edge = c(2, 3))
 #'
 #' @export
 stroke <- function(edges, angle_threshold = 0, attributes = FALSE,
