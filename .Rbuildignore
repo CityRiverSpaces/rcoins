@@ -1,5 +1,9 @@
+^renv$
+^renv\.lock$
 ^LICENSE\.md$
 ^\.github$
-^data-raw$
 ^environment\.yml$
+^_pkgdown\.yml$
+^CITATION.cff$
+^scripts$
 ^cran-comments\.md$
