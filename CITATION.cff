@@ -2,7 +2,7 @@
 # Visit https://bit.ly/cffinit to generate yours today!
 
 cff-version: 1.2.0
-title: rcoins
+title: rcoins: Identify Naturally Continuous Lines in a Spatial Network
 message: >-
   If you use this software, please cite it using the
   metadata from this file.
@@ -29,8 +29,11 @@ identifiers:
   - type: doi
     value: 10.5281/zenodo.14501804
 abstract: >-
-  Identify continuous lines in a network using an approach
-  based on the Continuity in Steet Network (COINS) method.
+   Provides functionality to group lines that form naturally continuous lines in
+   a spatial network. The algorithm implemented is based on the Continuity in
+   Street Networks (COINS) method <doi:10.1177/2399808320967680>, which identifies
+   continuous "strokes" in the network as the linestrings that maximize the angles
+   between consecutive segments.
 keywords:
   - R
   - COINS
