@@ -198,7 +198,7 @@
     },
     "SystemRequirements": null
   },
-  "fileSize": "944.162KB",
+  "fileSize": "944.533KB",
   "releaseNotes": "https://github.com/CityRiverSpaces/rcoins/blob/master/NEWS.md",
   "readme": "https://github.com/CityRiverSpaces/rcoins/blob/main/README.md",
   "contIntegration": "https://github.com/CityRiverSpaces/rcoins/actions/workflows/R-CMD-check.yaml"
