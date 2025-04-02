@@ -26,6 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Remove explicit return statement to comply with linting warning [#50](https://github.com/CityRiverSpaces/rcoins/pull/50)
 - Overall improvements of metadata files and documentation in preparation to CRAN submission [#52](https://github.com/CityRiverSpaces/rcoins/pull/52)
 - Typo fixed in README [#53](https://github.com/CityRiverSpaces/rcoins/pull/53)
+- Fix for the GitHub action introduced in [#55](https://github.com/CityRiverSpaces/rcoins/pull/56) [#56](https://github.com/CityRiverSpaces/rcoins/pull/56)
 
 # Version 0.1.0 - 2024-12-16
 
