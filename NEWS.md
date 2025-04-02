@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Contributing guidelines are added to the package [#44](https://github.com/CityRiverSpaces/rcoins/pull/44)
 - Added gitHub action to compare stroke to momepy on pull request [#47](https://github.com/CityRiverSpaces/rcoins/pull/47)
 - A test on real data is included [#46](https://github.com/CityRiverSpaces/rcoins/pull/46), then made more robust [#52](https://github.com/CityRiverSpaces/rcoins/pull/52)
+- Added codemeta.json file, together with a GitHub action to keep it updated [#55](https://github.com/CityRiverSpaces/rcoins/pull/55)
 
 ## Changed
 
