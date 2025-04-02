@@ -32,6 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix for the GitHub action introduced in [#55](https://github.com/CityRiverSpaces/rcoins/pull/56) [#56](https://github.com/CityRiverSpaces/rcoins/pull/56) [#58](https://github.com/CityRiverSpaces/rcoins/pull/58)
 - Fixes so that tests can run and vignettes built even if CRiSpData is not available [#59](https://github.com/CityRiverSpaces/rcoins/pull/59)
 - Other minor fixes, most notably the minimum R version set to 4.1 [#60](https://github.com/CityRiverSpaces/rcoins/pull/60)
+- Fix for typo that prevents parsing of the CFF file [#61](https://github.com/CityRiverSpaces/rcoins/pull/61)
 
 # Version 0.1.0 - 2024-12-16
 
