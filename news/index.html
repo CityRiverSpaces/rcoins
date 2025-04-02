@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">rcoins</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -35,6 +35,45 @@
     </div>
 
     <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.2.0" id="version-020">Version 0.2.0<a class="anchor" aria-label="anchor" href="#version-020"></a></h2>
+<div class="section level3">
+<h3 id="added-0-2-0">Added<a class="anchor" aria-label="anchor" href="#added-0-2-0"></a></h3>
+<ul><li>DOI is added to CITATION.cff and README (badge) <a href="https://github.com/CityRiverSpaces/rcoins/pull/43" class="external-link">#43</a>
+</li>
+<li>Contributing guidelines are added to the package <a href="https://github.com/CityRiverSpaces/rcoins/pull/44" class="external-link">#44</a>
+</li>
+<li>Added gitHub action to compare stroke to momepy on pull request <a href="https://github.com/CityRiverSpaces/rcoins/pull/47" class="external-link">#47</a>
+</li>
+<li>A test on real data is included <a href="https://github.com/CityRiverSpaces/rcoins/pull/46" class="external-link">#46</a>, then made more robust <a href="https://github.com/CityRiverSpaces/rcoins/pull/52" class="external-link">#52</a>
+</li>
+<li>Added codemeta.json file, together with a GitHub action to keep it updated <a href="https://github.com/CityRiverSpaces/rcoins/pull/55" class="external-link">#55</a>
+</li>
+</ul></div>
+<div class="section level3">
+<h3 id="changed-0-2-0">Changed<a class="anchor" aria-label="anchor" href="#changed-0-2-0"></a></h3>
+<ul><li>Data was first resized to the city boundary (buffer is dropped) <a href="https://github.com/CityRiverSpaces/rcoins/pull/46" class="external-link">#46</a>, then completely removed from the package <a href="https://github.com/CityRiverSpaces/rcoins/pull/49" class="external-link">#49</a>. We now use data packaged in the <a href="https://github.com/CityRiverSpaces/CRiSpData" class="external-link">CityRiverSpaces/CRiSpData</a> repository.</li>
+<li>Bumped version, author field adjusted <a href="https://github.com/CityRiverSpaces/rcoins/pull/57" class="external-link">#57</a>
+</li>
+</ul></div>
+<div class="section level3">
+<h3 id="fixed-0-2-0">Fixed<a class="anchor" aria-label="anchor" href="#fixed-0-2-0"></a></h3>
+<ul><li>Fix rendering of package information on the pkgdown website <a href="https://github.com/CityRiverSpaces/rcoins/pull/42" class="external-link">#42</a>
+</li>
+<li>Small fixes to docstrings <a href="https://github.com/CityRiverSpaces/rcoins/pull/45" class="external-link">#45</a>
+</li>
+<li>When an initial set of edges is provided, we do not skip through segments that we have already considered in other strokes <a href="https://github.com/CityRiverSpaces/rcoins/pull/48" class="external-link">#48</a>
+</li>
+<li>Remove explicit return statement to comply with linting warning <a href="https://github.com/CityRiverSpaces/rcoins/pull/50" class="external-link">#50</a>
+</li>
+<li>Overall improvements of metadata files and documentation in preparation to CRAN submission <a href="https://github.com/CityRiverSpaces/rcoins/pull/52" class="external-link">#52</a>
+</li>
+<li>Typo fixed in README <a href="https://github.com/CityRiverSpaces/rcoins/pull/53" class="external-link">#53</a>
+</li>
+<li>Fix for the GitHub action introduced in <a href="https://github.com/CityRiverSpaces/rcoins/pull/56" class="external-link">#55</a> <a href="https://github.com/CityRiverSpaces/rcoins/pull/56" class="external-link">#56</a>
+</li>
+</ul></div>
+</div>
+    <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.1.0" id="version-010---2024-12-16">Version 0.1.0 - 2024-12-16<a class="anchor" aria-label="anchor" href="#version-010---2024-12-16"></a></h2>
 <div class="section level3">
 <h3 id="added-0-1-0">Added<a class="anchor" aria-label="anchor" href="#added-0-1-0"></a></h3>
@@ -46,7 +85,7 @@
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Francesco Nattino, Claudiu Forgaci, Netherlands eScience Center.</p>
+  <p>Developed by Francesco Nattino, Claudiu Forgaci, Fakhereh Alidoost, Netherlands eScience Center.</p>
 </div>
 
 <div class="pkgdown-footer-right">
