@@ -5,6 +5,9 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: write
+
 on:
   # Manually trigger the Action under Actions/pkgcheck
   workflow_dispatch:
@@ -31,6 +34,11 @@ jobs:
 
       - name: Render codemeta
         run: Rscript -e 'codemetar::write_codemeta()'
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
       - name: Commit results
         run: |
