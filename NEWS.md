@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - When an initial set of edges is provided, we do not skip  through segments that we have already considered in other strokes [#48](https://github.com/CityRiverSpaces/rcoins/pull/48)
 - Remove explicit return statement to comply with linting warning [#50](https://github.com/CityRiverSpaces/rcoins/pull/50)
 - Overall improvements of metadata files and documentation in preparation to CRAN submission [#52](https://github.com/CityRiverSpaces/rcoins/pull/52)
+- Typo fixed in README [#53](https://github.com/CityRiverSpaces/rcoins/pull/53)
 
 # Version 0.1.0 - 2024-12-16
 
