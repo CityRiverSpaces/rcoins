@@ -1,0 +1,205 @@
+{
+  "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+  "@type": "SoftwareSourceCode",
+  "identifier": "rcoins",
+  "description": "Provides functionality to group lines that form naturally continuous lines in a spatial network. The algorithm implemented is based on the Continuity in Street Networks (COINS) method <doi:10.1177/2399808320967680>, which identifies continuous \"strokes\" in the network as the linestrings that maximize the angles between consecutive segments.",
+  "name": "rcoins: Identify Naturally Continuous Lines in a Spatial Network",
+  "relatedLink": ["https://cityriverspaces.github.io/rcoins/", "https://doi.org/10.5281/zenodo.14501805"],
+  "codeRepository": "https://github.com/CityRiverSpaces/rcoins",
+  "issueTracker": "https://github.com/CityRiverSpaces/rcoins/issues",
+  "license": "Apache License 2",
+  "version": "0.1.0",
+  "programmingLanguage": {
+    "@type": "ComputerLanguage",
+    "name": "R",
+    "url": "https://r-project.org"
+  },
+  "runtimePlatform": "R version 4.4.0 (2024-04-24)",
+  "author": [
+    {
+      "@type": "Person",
+      "givenName": "Francesco",
+      "familyName": "Nattino",
+      "email": "f.nattino@esciencecenter.nl",
+      "@id": "https://orcid.org/0000-0003-3286-0139"
+    },
+    {
+      "@type": "Person",
+      "givenName": "Claudiu",
+      "familyName": "Forgaci",
+      "email": "c.forgaci@tudelft.nl",
+      "@id": "https://orcid.org/0000-0003-3218-5102"
+    }
+  ],
+  "contributor": [
+    {
+      "@type": "Person",
+      "givenName": "Fakhereh",
+      "familyName": "Alidoost",
+      "email": "f.alidoost@esciencecenter.nl",
+      "@id": "https://orcid.org/0000-0001-8407-6472"
+    },
+    {
+      "@type": "Person",
+      "givenName": "Thijs",
+      "familyName": "van Lankveld",
+      "email": "t.vanlankveld@esciencecenter.nl",
+      "@id": "https://orcid.org/0009-0001-1147-4813"
+    }
+  ],
+  "copyrightHolder": [
+    {
+      "@type": "Person",
+      "givenName": "Francesco",
+      "familyName": "Nattino",
+      "email": "f.nattino@esciencecenter.nl",
+      "@id": "https://orcid.org/0000-0003-3286-0139"
+    }
+  ],
+  "funder": [
+    {
+      "@type": "Organization",
+      "name": "Netherlands eScience Center",
+      "email": "info@esciencecenter.nl"
+    }
+  ],
+  "maintainer": [
+    {
+      "@type": "Person",
+      "givenName": "Francesco",
+      "familyName": "Nattino",
+      "email": "f.nattino@esciencecenter.nl",
+      "@id": "https://orcid.org/0000-0003-3286-0139"
+    }
+  ],
+  "softwareSuggestions": [
+    {
+      "@type": "SoftwareApplication",
+      "identifier": "CRiSpData",
+      "name": "CRiSpData",
+      "sameAs": "https://github.com/CityRiverSpaces/CRiSpData"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "identifier": "ggplot2",
+      "name": "ggplot2",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=ggplot2"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "identifier": "knitr",
+      "name": "knitr",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=knitr"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "identifier": "rmarkdown",
+      "name": "rmarkdown",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=rmarkdown"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "identifier": "sfnetworks",
+      "name": "sfnetworks",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=sfnetworks"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "identifier": "testthat",
+      "name": "testthat",
+      "version": ">= 3.0.0",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=testthat"
+    }
+  ],
+  "softwareRequirements": {
+    "1": {
+      "@type": "SoftwareApplication",
+      "identifier": "dplyr",
+      "name": "dplyr",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=dplyr"
+    },
+    "2": {
+      "@type": "SoftwareApplication",
+      "identifier": "rlang",
+      "name": "rlang",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=rlang"
+    },
+    "3": {
+      "@type": "SoftwareApplication",
+      "identifier": "sf",
+      "name": "sf",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=sf"
+    },
+    "4": {
+      "@type": "SoftwareApplication",
+      "identifier": "sfheaders",
+      "name": "sfheaders",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=sfheaders"
+    },
+    "5": {
+      "@type": "SoftwareApplication",
+      "identifier": "R",
+      "name": "R",
+      "version": ">= 2.10"
+    },
+    "SystemRequirements": null
+  },
+  "fileSize": "944.162KB",
+  "releaseNotes": "https://github.com/CityRiverSpaces/rcoins/blob/master/NEWS.md",
+  "readme": "https://github.com/CityRiverSpaces/rcoins/blob/main/README.md",
+  "contIntegration": "https://github.com/CityRiverSpaces/rcoins/actions/workflows/R-CMD-check.yaml"
+}
