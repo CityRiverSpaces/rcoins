@@ -16,7 +16,7 @@ Identify continuous lines in a network using an approach based on the Continuity
 
 ## Installation
 
-You can install the released version of CRiSp from
+You can install the released version of rcoins from
 [CRAN](https://cran.r-project.org) with:
 
 ``` r
