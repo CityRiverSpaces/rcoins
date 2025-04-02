@@ -5,6 +5,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # [Unreleased]
 
+# Version 0.2.0
+
 ## Added
 
 - DOI is added to CITATION.cff and README (badge) [#43](https://github.com/CityRiverSpaces/rcoins/pull/43)
