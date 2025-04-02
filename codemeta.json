@@ -2,7 +2,7 @@
   "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
   "@type": "SoftwareSourceCode",
   "identifier": "rcoins",
-  "description": "Provides functionality to group lines that form naturally continuous lines in a spatial network. The algorithm implemented is based on the Continuity in Street Networks (COINS) method <doi:10.1177/2399808320967680>, which identifies continuous \"strokes\" in the network as the linestrings that maximize the angles between consecutive segments.",
+  "description": "Provides functionality to group lines that form naturally continuous lines in a spatial network. The algorithm implemented is based on the Continuity in Street Networks (COINS) method <doi:10.1177/2399808320967680>, which identifies continuous \"strokes\" in the network as the line strings that maximize the angles between consecutive segments.",
   "name": "rcoins: Identify Naturally Continuous Lines in a Spatial Network",
   "relatedLink": ["https://cityriverspaces.github.io/rcoins/", "https://doi.org/10.5281/zenodo.14501805"],
   "codeRepository": "https://github.com/CityRiverSpaces/rcoins",
@@ -194,11 +194,11 @@
       "@type": "SoftwareApplication",
       "identifier": "R",
       "name": "R",
-      "version": ">= 2.10"
+      "version": ">= 4.1.0"
     },
     "SystemRequirements": null
   },
-  "fileSize": "892.536KB",
+  "fileSize": "893.103KB",
   "releaseNotes": "https://github.com/CityRiverSpaces/rcoins/blob/master/NEWS.md",
   "readme": "https://github.com/CityRiverSpaces/rcoins/blob/main/README.md",
   "contIntegration": "https://github.com/CityRiverSpaces/rcoins/actions/workflows/R-CMD-check.yaml"
