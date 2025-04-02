@@ -10,11 +10,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - DOI is added to CITATION.cff and README (badge) [#43](https://github.com/CityRiverSpaces/rcoins/pull/43)
 - Contributing guidelines are added to the package [#44](https://github.com/CityRiverSpaces/rcoins/pull/44)
 - Added gitHub action to compare stroke to momepy on pull request [#47](https://github.com/CityRiverSpaces/rcoins/pull/47)
-- A test on real data is included [#46](https://github.com/CityRiverSpaces/rcoins/pull/46)
+- A test on real data is included [#46](https://github.com/CityRiverSpaces/rcoins/pull/46), then made more robust [#52](https://github.com/CityRiverSpaces/rcoins/pull/52)
 
 ## Changed
 
-- Data was first resized to the city boundary (buffer is dropped) [#46](https://github.com/CityRiverSpaces/rcoins/pull/46), then completely removed from the package [#49](https://github.com/CityRiverSpaces/rcoins/pull/49). 
+- Data was first resized to the city boundary (buffer is dropped) [#46](https://github.com/CityRiverSpaces/rcoins/pull/46), then completely removed from the package [#49](https://github.com/CityRiverSpaces/rcoins/pull/49).
   We now use data packaged in the [CityRiverSpaces/CRiSpData](https://github.com/CityRiverSpaces/CRiSpData) repository.
 
 ## Fixed
@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Small fixes to docstrings [#45](https://github.com/CityRiverSpaces/rcoins/pull/45)
 - When an initial set of edges is provided, we do not skip  through segments that we have already considered in other strokes [#48](https://github.com/CityRiverSpaces/rcoins/pull/48)
 - Remove explicit return statement to comply with linting warning [#50](https://github.com/CityRiverSpaces/rcoins/pull/50)
+- Overall improvements of metadata files and documentation in preparation to CRAN submission [#52](https://github.com/CityRiverSpaces/rcoins/pull/52)
 
 # Version 0.1.0 - 2024-12-16
 
