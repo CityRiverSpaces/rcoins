@@ -3,7 +3,7 @@
 #' Provides functionality to group lines that form naturally continuous lines in
 #' a spatial network. The algorithm implemented is based on the Continuity in
 #' Street Networks (COINS) method <doi:10.1177/2399808320967680>, which
-#' identifies continuous "strokes" in the network as the linestrings that
+#' identifies continuous "strokes" in the network as the line strings that
 #' maximize the angles between consecutive segments.
 #'
 #' @param edges An object of class \code{\link[sf]{sfc}} (or compatible),

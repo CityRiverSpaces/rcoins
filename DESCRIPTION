@@ -16,7 +16,7 @@ Description: Provides functionality to group lines that form naturally
     continuous lines in a spatial network. The algorithm implemented is based
     on the Continuity in Street Networks (COINS) method
     <doi:10.1177/2399808320967680>, which identifies continuous "strokes" in the
-    network as the linestrings that maximize the angles between consecutive
+    network as the line strings that maximize the angles between consecutive
     segments.
 License: Apache License (>= 2)
 URL: https://cityriverspaces.github.io/rcoins/, https://doi.org/10.5281/zenodo.14501805, https://github.com/CityRiverSpaces/rcoins
