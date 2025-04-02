@@ -5,14 +5,14 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Continuity in street networks • rcoins</title>
+<title>Identify Naturally Continuous Lines in a Spatial Network • rcoins</title>
 <script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Continuity in street networks">
-<meta name="description" content="Identify continuous street strokes in a network">
-<meta property="og:description" content="Identify continuous street strokes in a network">
+<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Identify Naturally Continuous Lines in a Spatial Network">
+<meta name="description" content='Provides functionality to group lines that form naturally continuous lines in a spatial network. The algorithm implemented is based on the Continuity in Street Networks (COINS) method &lt;doi:10.1177/2399808320967680&gt;, which identifies continuous "strokes" in the network as the linestrings that maximize the angles between consecutive segments.'>
+<meta property="og:description" content='Provides functionality to group lines that form naturally continuous lines in a spatial network. The algorithm implemented is based on the Continuity in Street Networks (COINS) method &lt;doi:10.1177/2399808320967680&gt;, which identifies continuous "strokes" in the network as the linestrings that maximize the angles between consecutive segments.'>
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -55,11 +55,15 @@
 <!-- badges: start -->
 
 <p>Identify continuous lines in a network using an approach based on the Continuity in Steet Network (COINS) method<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content='&lt;p&gt;&lt;a href="http://dx.doi.org/10.1177/2399808320967680" class="external-link"&gt;Tripathy, P., Rao, P., Balakrishnan, K., &amp;amp; Malladi, T. (2021). An open-source tool to extract natural continuity and hierarchy of urban street networks. Environment and Planning B: Urban Analytics and City Science, 48(8), 2188-2205.&lt;/a&gt;&lt;/p&gt;'><sup>1</sup></a>.</p>
+<p><code>rcoins</code> is a R (re)implementation of the COINS algorithm, which is also available in Python as a module of the <a href="https://docs.momepy.org/en/latest/api/momepy.COINS.html" class="external-link"><code>momepy</code></a> library or in its original version: <a href="https://github.com/PratyushTripathy/COINS" class="external-link">PratyushTripathy/COINS</a>.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
-<p>You can install the development version of rcoins from the R terminal like so:</p>
+<p>You can install the released version of CRiSp from <a href="https://cran.r-project.org" class="external-link">CRAN</a> with:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"rcoins"</span><span class="op">)</span></span></code></pre></div>
+<p>You can install the development version of rcoins from the R terminal like so:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># install.packages("devtools")</span></span>
 <span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"CityRiverSpaces/rcoins"</span><span class="op">)</span></span></code></pre></div>
 <div class="section level3">
@@ -82,23 +86,23 @@ conda activate rcoins</code></pre>
 <h2 id="example">Example<a class="anchor" aria-label="anchor" href="#example"></a>
 </h2>
 <p>Given the street network of the city of Bucharest (data source: <a href="https://www.openstreetmap.org/" class="external-link">OpenStreetMap</a>)</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/CityRiverSpaces/CRiSpData" class="external-link">CRiSpData</a></span><span class="op">)</span></span>
 <span><span class="va">streets</span> <span class="op">&lt;-</span> <span class="va">bucharest_osm</span><span class="op">$</span><span class="va">streets</span></span></code></pre></div>
 <details><summary>
 Plot streets
-</summary><div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+</summary><div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html" class="external-link">st_geometry</a></span><span class="op">(</span><span class="va">streets</span><span class="op">)</span>,</span>
 <span>     col <span class="op">=</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/plot.html" class="external-link">sf.colors</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">streets</span><span class="op">)</span>, categorical <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
 <span>     lwd <span class="op">=</span> <span class="fl">5</span>, xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">418500</span>, <span class="fl">437500</span><span class="op">)</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4909800</span>, <span class="fl">4931500</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </details><p><img src="reference/figures/streets.png" alt="Bucharest streets" width="500"></p>
 <p>Determine continuous lines in the network as:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://cityriverspaces.github.io/rcoins/">rcoins</a></span><span class="op">)</span></span>
 <span><span class="va">continuous_streets</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/stroke.html">stroke</a></span><span class="op">(</span><span class="va">streets</span><span class="op">)</span></span></code></pre></div>
 <details><summary>
 Plot continuous streets
-</summary><div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+</summary><div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">continuous_streets</span>,</span>
 <span>     col <span class="op">=</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/plot.html" class="external-link">sf.colors</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">continuous_streets</span><span class="op">)</span>, categorical <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
 <span>     lwd <span class="op">=</span> <span class="fl">5</span>, xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">418500</span>, <span class="fl">437500</span><span class="op">)</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4909800</span>, <span class="fl">4931500</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
@@ -114,14 +118,14 @@ Plot continuous streets
 <h2 id="development">Development<a class="anchor" aria-label="anchor" href="#development"></a>
 </h2>
 <p>When modifying the R source code, load the library as:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">load_all</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p>Run tests locally:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">test</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p>Run the linter locally:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">lintr</span><span class="fu">::</span><span class="fu">lint_package</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">lintr</span><span class="fu">::</span><span class="fu"><a href="https://lintr.r-lib.org/reference/lint.html" class="external-link">lint_package</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
 
@@ -160,7 +164,7 @@ Plot continuous streets
 <div class="developers">
 <h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
-<li>Francesco Nattino <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0003-3286-0139" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li>Francesco Nattino <br><small class="roles"> Author, maintainer, copyright holder </small> <a href="https://orcid.org/0000-0003-3286-0139" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
 <li>Claudiu Forgaci <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0003-3218-5102" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
 <li><a href="authors.html">More about authors...</a></li>
 </ul>
