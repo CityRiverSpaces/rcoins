@@ -61,8 +61,9 @@ Rscript -e 'devtools::install(dependencies = TRUE)'
 Given the street network of the city of Bucharest (data source: [OpenStreetMap][osm])
 
 ``` r
-library(CRiSpData)
-streets <- bucharest_osm$streets
+library(rcoins)
+bucharest <- get_example_data()
+streets <- bucharest$streets
 ```
 
 <details>
@@ -82,7 +83,6 @@ plot(sf::st_geometry(streets),
 Determine continuous lines in the network as:
 
 ``` r
-library(rcoins)
 continuous_streets <- stroke(streets)
 ```
 

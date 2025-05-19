@@ -18,4 +18,3 @@ dependencies:
   - r-testthat >=3.0.0
 # Others
   - r-lintr
-# NOTE: CRiSpData must be installed manually: `Rscript -e 'devtools::install_github("CityRiverSpaces/CRiSpData")'`
