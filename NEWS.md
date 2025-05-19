@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # [Unreleased]
 
+## Changed
+
+- Remove GitHub action to update codemeta file - quite buggy, passing when it should not [#65](https://github.com/CityRiverSpaces/rcoins/pull/65)
+
 ## Fixed
 
 - Fixes so that tests can run and vignettes built even if CRiSpData is not available [#59](https://github.com/CityRiverSpaces/rcoins/pull/59)
