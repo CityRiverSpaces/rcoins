@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Changed
 
-- Removed dependency from CRiSpData, a function is added to retrieve the same dataset from a 4TU 4TU.ResearchData repository [#64](https://github.com/CityRiverSpaces/rcoins/pull/64)
+- Removed dependency from CRiSpData, a function is added to retrieve the same dataset from a 4TU.ResearchData repository [#64](https://github.com/CityRiverSpaces/rcoins/pull/64)
 
 ## Fixed
 
