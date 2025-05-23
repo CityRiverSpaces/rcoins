@@ -8,7 +8,7 @@
   "codeRepository": "https://github.com/CityRiverSpaces/rcoins",
   "issueTracker": "https://github.com/CityRiverSpaces/rcoins/issues",
   "license": "Apache License 2",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
@@ -192,7 +192,7 @@
     },
     "SystemRequirements": null
   },
-  "fileSize": "952.919KB",
+  "fileSize": "932.752KB",
   "releaseNotes": "https://github.com/CityRiverSpaces/rcoins/blob/master/NEWS.md",
   "readme": "https://github.com/CityRiverSpaces/rcoins/blob/main/README.md",
   "contIntegration": "https://github.com/CityRiverSpaces/rcoins/actions/workflows/R-CMD-check.yaml"
