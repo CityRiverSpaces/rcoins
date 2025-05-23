@@ -87,8 +87,9 @@ conda activate rcoins</code></pre>
 </h2>
 <p>Given the street network of the city of Bucharest (data source: <a href="https://www.openstreetmap.org/" class="external-link">OpenStreetMap</a>)</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/CityRiverSpaces/CRiSpData" class="external-link">CRiSpData</a></span><span class="op">)</span></span>
-<span><span class="va">streets</span> <span class="op">&lt;-</span> <span class="va">bucharest_osm</span><span class="op">$</span><span class="va">streets</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://cityriverspaces.github.io/rcoins/">rcoins</a></span><span class="op">)</span></span>
+<span><span class="va">bucharest</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_example_data.html">get_example_data</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">streets</span> <span class="op">&lt;-</span> <span class="va">bucharest</span><span class="op">$</span><span class="va">streets</span></span></code></pre></div>
 <details><summary>
 Plot streets
 </summary><div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
@@ -98,8 +99,7 @@ Plot streets
 </details><p><img src="reference/figures/streets.png" alt="Bucharest streets" width="500"></p>
 <p>Determine continuous lines in the network as:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://cityriverspaces.github.io/rcoins/">rcoins</a></span><span class="op">)</span></span>
-<span><span class="va">continuous_streets</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/stroke.html">stroke</a></span><span class="op">(</span><span class="va">streets</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">continuous_streets</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/stroke.html">stroke</a></span><span class="op">(</span><span class="va">streets</span><span class="op">)</span></span></code></pre></div>
 <details><summary>
 Plot continuous streets
 </summary><div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
@@ -125,7 +125,7 @@ Plot continuous streets
 <code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">test</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p>Run the linter locally:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">lintr</span><span class="fu">::</span><span class="fu"><a href="https://lintr.r-lib.org/reference/lint.html" class="external-link">lint_package</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">lintr</span><span class="fu">::</span><span class="fu">lint_package</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
 
@@ -164,9 +164,9 @@ Plot continuous streets
 <div class="developers">
 <h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
-<li>Francesco Nattino <br><small class="roles"> Author, maintainer, copyright holder </small> <a href="https://orcid.org/0000-0003-3286-0139" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
-<li>Claudiu Forgaci <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0003-3218-5102" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
-<li>Fakhereh Alidoost <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0001-8407-6472" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li>Francesco Nattino <br><small class="roles"> Author, maintainer, copyright holder </small> <a href="https://orcid.org/0000-0003-3286-0139" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a>  </li>
+<li>Claudiu Forgaci <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0003-3218-5102" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a>  </li>
+<li>Fakhereh Alidoost <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0001-8407-6472" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a>  </li>
 <li><a href="authors.html">More about authors...</a></li>
 </ul>
 </div>
@@ -188,7 +188,7 @@ Plot continuous streets
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.2.</p>
 </div>
 
     </footer>
