@@ -198,9 +198,10 @@ test_that("a ring is recognized when from_edge is specified", {
 
 test_that("flow mode does not break edges on a real dataset", {
 
-  skip_if_not_installed("CRiSpData")
+  skip_on_ci()
 
-  edges <- sf::st_geometry(CRiSpData::bucharest_osm$streets)
+  bucharest <- get_example_data()
+  edges <- sf::st_geometry(bucharest$streets)
 
   strokes <- rcoins::stroke(edges, flow_mode = TRUE)
 
