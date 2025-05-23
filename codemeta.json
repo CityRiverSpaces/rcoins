@@ -14,7 +14,7 @@
     "name": "R",
     "url": "https://r-project.org"
   },
-  "runtimePlatform": "R version 4.4.3 (2025-02-28)",
+  "runtimePlatform": "R version 4.4.0 (2024-04-24)",
   "author": [
     {
       "@type": "Person",
@@ -73,12 +73,6 @@
     }
   ],
   "softwareSuggestions": [
-    {
-      "@type": "SoftwareApplication",
-      "identifier": "CRiSpData",
-      "name": "CRiSpData",
-      "sameAs": "https://github.com/CityRiverSpaces/CRiSpData"
-    },
     {
       "@type": "SoftwareApplication",
       "identifier": "ggplot2",
@@ -198,7 +192,7 @@
     },
     "SystemRequirements": null
   },
-  "fileSize": "893.103KB",
+  "fileSize": "952.919KB",
   "releaseNotes": "https://github.com/CityRiverSpaces/rcoins/blob/master/NEWS.md",
   "readme": "https://github.com/CityRiverSpaces/rcoins/blob/main/README.md",
   "contIntegration": "https://github.com/CityRiverSpaces/rcoins/actions/workflows/R-CMD-check.yaml"

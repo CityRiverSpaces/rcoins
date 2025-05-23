@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # [Unreleased]
 
+## Changed
+
+- Removed dependency from CRiSpData, a function is added to retrieve the same dataset from a 4TU.ResearchData repository [#64](https://github.com/CityRiverSpaces/rcoins/pull/64)
+
 ## Fixed
 
 - Fixes so that tests can run and vignettes built even if CRiSpData is not available [#59](https://github.com/CityRiverSpaces/rcoins/pull/59)
