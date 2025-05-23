@@ -10,9 +10,7 @@ Identify continuous lines in a network using an approach based on the Continuity
 
 `rcoins` is a R (re)implementation of the COINS algorithm, which is also available in Python as a module of the [`momepy`](https://docs.momepy.org/en/latest/api/momepy.COINS.html) library or in its original version: [PratyushTripathy/COINS](https://github.com/PratyushTripathy/COINS).
 
-[^1]: [Tripathy, P., Rao, P., Balakrishnan, K., & Malladi, T. (2021). An open-source tool to extract natural continuity and hierarchy of urban street networks. Environment and Planning B: Urban Analytics and City Science, 48(8), 2188-2205.][coins]
-
-[coins]: http://dx.doi.org/10.1177/2399808320967680
+[^1]: Tripathy, P., Rao, P., Balakrishnan, K., & Malladi, T. (2021). An open-source tool to extract natural continuity and hierarchy of urban street networks. Environment and Planning B: Urban Analytics and City Science, 48(8), 2188-2205. DOI: 10.1177/2399808320967680
 
 ## Installation
 
