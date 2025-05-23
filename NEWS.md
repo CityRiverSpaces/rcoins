@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Other minor fixes, most notably the minimum R version set to 4.1 [#60](https://github.com/CityRiverSpaces/rcoins/pull/60)
 - Fix for typo that prevents parsing of the CFF file [#61](https://github.com/CityRiverSpaces/rcoins/pull/61)
 - Fixed the changelog (this file), moving commits after the 0.2.0 tag to the new release [#62](https://github.com/CityRiverSpaces/rcoins/pull/62)
+- Fixes for a couple of URLs that raised issues with `urlchecker` [#67](https://github.com/CityRiverSpaces/rcoins/pull/67)
 
 # Version 0.2.0 - 2025-04-03
 
@@ -30,7 +31,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Changed
 
 - Data was first resized to the city boundary (buffer is dropped) [#46](https://github.com/CityRiverSpaces/rcoins/pull/46), then completely removed from the package [#49](https://github.com/CityRiverSpaces/rcoins/pull/49).
-  We now use data packaged in the [CityRiverSpaces/CRiSpData](https://github.com/CityRiverSpaces/CRiSpData) repository.
+  We now use data packaged in the CityRiverSpaces/CRiSpData repository.
 - Bumped version, author field adjusted [#57](https://github.com/CityRiverSpaces/rcoins/pull/57)
 
 ## Fixed
