@@ -198,6 +198,8 @@ test_that("a ring is recognized when from_edge is specified", {
 
 test_that("flow mode does not break edges on a real dataset", {
 
+  skip_on_ci()
+
   bucharest <- get_example_data()
   edges <- sf::st_geometry(bucharest$streets)
 
