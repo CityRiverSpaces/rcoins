@@ -17,6 +17,9 @@ get_example_data <- function() {
   url_osm <- "https://data.4tu.nl/file/f5d5e118-b5bd-4dfb-987f-fe10d1b9b386/f519315e-b92d-4815-b924-3175bd2a7a61"
   # nolint end
   temp_file <- tempfile(fileext = ".gpkg")
+  # temporarily increate timeout, reset value on exit
+  op <- options(timeout = 300)
+  on.exit(op)
   download.file(url_osm, destfile = temp_file, mode = "wb", quiet = TRUE)
   layers <- c("streets", "river_centerline")
   sapply(layers, \(x) sf::st_read(temp_file, layer = x, quiet = TRUE))
