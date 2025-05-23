@@ -30,7 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Changed
 
 - Data was first resized to the city boundary (buffer is dropped) [#46](https://github.com/CityRiverSpaces/rcoins/pull/46), then completely removed from the package [#49](https://github.com/CityRiverSpaces/rcoins/pull/49).
-  We now use data packaged in the [CityRiverSpaces/CRiSpData](https://github.com/CityRiverSpaces/CRiSpData) repository.
+  We now use data packaged in the CityRiverSpaces/CRiSpData repository.
 - Bumped version, author field adjusted [#57](https://github.com/CityRiverSpaces/rcoins/pull/57)
 
 ## Fixed
