@@ -102,9 +102,9 @@ plot(continuous_streets,
 
 ## Contributing
 
-We look very much forward to contributions to the package. See the [Contributing Guide](.github/CONTRIBUTING.md) for further details.
+We look very much forward to contributions to the package. See the [Contributing Guide](https://github.com/CityRiverSpaces/rcoins/blob/main/.github/CONTRIBUTING.md) for further details.
 
-This package is released with a [Contributor Code of Conduct](.github/CODE_OF_CONDUCT.md). By contributing to this project you agree to abide by its terms.
+This package is released with a [Contributor Code of Conduct](https://github.com/CityRiverSpaces/rcoins/blob/main/.github/CODE_OF_CONDUCT.md). By contributing to this project you agree to abide by its terms.
 
 ## Development
 
