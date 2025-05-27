@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # [Unreleased]
 
+## Fixed
+
+- Fix options (re-)setting in example data [#73](https://github.com/CityRiverSpaces/rcoins/pull/73)
+
 # Version 0.3.1 - 2025-05-24
 
 ## Fixed
