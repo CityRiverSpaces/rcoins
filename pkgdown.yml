@@ -3,7 +3,7 @@ pkgdown: 2.1.3
 pkgdown_sha: ~
 articles:
   using-rcoins: using-rcoins.html
-last_built: 2025-05-27T11:31Z
+last_built: 2025-05-27T11:45Z
 urls:
   reference: https://cityriverspaces.github.io/rcoins/reference
   article: https://cityriverspaces.github.io/rcoins/articles
