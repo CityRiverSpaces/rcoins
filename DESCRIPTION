@@ -1,6 +1,6 @@
 Package: rcoins
 Title: Identify Naturally Continuous Lines in a Spatial Network
-Version: 0.3.1
+Version: 0.3.2
 Authors@R: c(
     person("Francesco", "Nattino", , "f.nattino@esciencecenter.nl", role = c("aut", "cre", "cph"),
            comment = c(ORCID = "0000-0003-3286-0139")),
@@ -14,10 +14,10 @@ Authors@R: c(
   )
 Description: Provides functionality to group lines that form naturally
     continuous lines in a spatial network. The algorithm implemented is based
-    on the Continuity in Street Networks (COINS) method from Tripathy (2021)
-    <doi:10.1177/2399808320967680>, which identifies continuous "strokes" in the
-    network as the line strings that maximize the angles between consecutive
-    segments.
+    on the Continuity in Street Networks (COINS) method from Tripathy et al.
+    (2021) <doi:10.1177/2399808320967680>, which identifies continuous
+    "strokes" in the network as the line strings that maximize the angles
+    between consecutive segments.
 License: Apache License (>= 2)
 URL: https://cityriverspaces.github.io/rcoins/, https://doi.org/10.5281/zenodo.14501805, https://github.com/CityRiverSpaces/rcoins
 BugReports: https://github.com/CityRiverSpaces/rcoins/issues
