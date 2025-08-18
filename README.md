@@ -3,7 +3,7 @@
 
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/CityRiverSpaces/rcoins/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/CityRiverSpaces/rcoins/actions/workflows/R-CMD-check.yaml)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.14501805.svg)](https://doi.org/10.5281/zenodo.14501805)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.14501804.svg)](https://doi.org/10.5281/zenodo.14501804)
 <!-- badges: end -->
 
 Identify continuous lines in a network using an approach based on the Continuity in Steet Network (COINS) method[^1].
