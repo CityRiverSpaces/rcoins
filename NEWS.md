@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # [Unreleased]
 
+## Fixed
+
+- Fixed DOI badge to point to all versions [#79](https://github.com/CityRiverSpaces/rcoins/pull/79)
+
 # Version 0.3.2 - 2025-05-27
 
 ## Fixed
