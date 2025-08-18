@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # [Unreleased]
 
+## Added
+
+- Package logo is added [#78](https://github.com/CityRiverSpaces/rcoins/pull/78)
+
 # Version 0.3.2 - 2025-05-27
 
 ## Fixed
