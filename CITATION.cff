@@ -3,8 +3,9 @@
 
 cff-version: 1.2.0
 title: >-
-  "rcoins: Identify Naturally Continuous Lines in a Spatial Network"
-message: 
+  rcoins: Identify Naturally Continuous Lines in a Spatial
+  Network
+message: >-
   If you use this software, please cite it using the
   metadata from this file.
 type: software
@@ -24,17 +25,19 @@ authors:
     email: f.alidoost@esciencecenter.nl
     affiliation: Netherlands eScience Center
     orcid: 'https://orcid.org/0000-0001-8407-6472'
-repository-code: 'https://github.com/CityRiverSpaces/rcoins'
-url: 'https://cityriverspaces.github.io/rcoins'
 identifiers:
   - type: doi
     value: 10.5281/zenodo.14501804
+repository-code: 'https://github.com/CityRiverSpaces/rcoins'
+url: 'https://cityriverspaces.github.io/rcoins'
 abstract: >-
-   Provides functionality to group lines that form naturally continuous lines in
-   a spatial network. The algorithm implemented is based on the Continuity in
-   Street Networks (COINS) method <doi:10.1177/2399808320967680>, which identifies
-   continuous "strokes" in the network as the line strings that maximize the angles
-   between consecutive segments.
+  Provides functionality to group lines that form naturally
+  continuous lines in a spatial network. The algorithm
+  implemented is based on the Continuity in Street Networks
+  (COINS) method from Tripathy et al. (2021)
+  <doi:10.1177/2399808320967680>, which identifies
+  continuous "strokes" in the network as the line strings
+  that maximize the angles between consecutive segments.
 keywords:
   - R
   - COINS
