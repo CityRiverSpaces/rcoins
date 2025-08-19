@@ -8,3 +8,5 @@
 ^scripts$
 ^cran-comments\.md$
 ^codemeta\.json$
+^.*\.Rproj$
+^\.Rproj\.user$
