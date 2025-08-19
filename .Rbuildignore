@@ -8,3 +8,4 @@
 ^scripts$
 ^cran-comments\.md$
 ^codemeta\.json$
+^README\.Rmd$
