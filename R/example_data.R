@@ -16,33 +16,12 @@
 #'
 #' @examplesIf interactive()
 #' get_osm_example_data(force_download = TRUE)
-get_osm_example_data <- function(force_download = FALSE) {
+get_example_data <- function(force_download = FALSE) {
   file <- get_example_data_file("bucharest_osm.gpkg",
                                 force_download = force_download)
   names <- sf::st_layers(file)$name
   lapply(names, \(layer) sf::st_read(file, layer = layer, quiet = TRUE)) |>
     setNames(names)
-}
-
-#' Get example DEM data
-#'
-#' This function retrieves example Digital Elevation Model (DEM) data from the
-#' Zenodo data repository, and it can be used in examples and tests. The code
-#' used to generate the example dataset is available at
-#' https://github.com/CityRiverSpaces/CRiSpExampleData. Note that the example
-#' dataset is cached locally, so that subsequent calls to the function can
-#' load the example data from disk without having to re-download the data.
-#'
-#' @param force_download Download data even if cached data is available
-#' @return An object of class [`terra::SpatRaster`] containing the DEM data.
-#' @export
-#'
-#' @examplesIf interactive()
-#' get_dem_example_data(force_download = TRUE)
-get_dem_example_data <- function(force_download = FALSE) {
-  file <- get_example_data_file("bucharest_dem.tiff",
-                                force_download = force_download)
-  terra::rast(file)
 }
 
 #' Retrieve an example data file from the data repository
