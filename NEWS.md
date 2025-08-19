@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Added
 
 - Package logo is added [#78](https://github.com/CityRiverSpaces/rcoins/pull/78)
+- The README.md file is now automatically generated from a .Rmd file [#82](https://github.com/CityRiverSpaces/rcoins/pull/82)
 
 ## Fixed
 
