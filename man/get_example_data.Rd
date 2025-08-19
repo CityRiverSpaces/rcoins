@@ -4,10 +4,7 @@
 \alias{get_example_data}
 \title{Get example OSM data}
 \usage{
-get_example_data(force_download = FALSE)
-}
-\arguments{
-\item{force_download}{Download data even if cached data is available}
+get_example_data()
 }
 \value{
 A list of sf objects containing the OSM data as \code{\link[sf:sfc]{sf::sfc}}
@@ -23,6 +20,6 @@ load the example data from disk without having to re-download the data.
 }
 \examples{
 \dontshow{if (interactive()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
-get_osm_example_data(force_download = TRUE)
+get_osm_example_data()
 \dontshow{\}) # examplesIf}
 }

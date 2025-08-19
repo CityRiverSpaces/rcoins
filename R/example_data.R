@@ -7,7 +7,6 @@
 #' dataset is cached locally, so that subsequent calls to the function can
 #' load the example data from disk without having to re-download the data.
 #'
-#' @param force_download Download data even if cached data is available
 #' @return A list of sf objects containing the OSM data as [`sf::sfc`]
 #'   objects.
 #' @importFrom utils download.file
@@ -15,10 +14,9 @@
 #' @export
 #'
 #' @examplesIf interactive()
-#' get_osm_example_data(force_download = TRUE)
-get_example_data <- function(force_download = FALSE) {
-  file <- get_example_data_file("bucharest_osm.gpkg",
-                                force_download = force_download)
+#' get_osm_example_data()
+get_example_data <- function() {
+  file <- get_example_data_file("bucharest_osm.gpkg")
   names <- sf::st_layers(file)$name
   lapply(names, \(layer) sf::st_read(file, layer = layer, quiet = TRUE)) |>
     setNames(names)
@@ -28,19 +26,20 @@ get_example_data <- function(force_download = FALSE) {
 #'
 #' Store the file in the cache directory, for subsequent reuse.
 #'
-#' @param force_download Download data even if cached data is available
 #' @return A character string representing the file path
 #' @keywords internal
-get_example_data_file <- function(filename, force_download = FALSE) {
-  if (force_download) {
-    download_url <- get_download_url(filename)
-    # temporarily increase timeout, reset value on exit
-    op <- options(timeout = 120)
-    on.exit(options(op))
-    data <- retry(download.file, url = download_url, mode = "wb", quiet = TRUE)
-  }
-
-  data
+get_example_data_file <- function(filename) {
+  download_url <- get_download_url(filename)
+  filepath <- tempfile(fileext = ".gpkg")
+  # temporarily increase timeout, reset value on exit
+  op <- options(timeout = 120)
+  on.exit(options(op))
+  data <- retry(download.file,
+                url = download_url,
+                destfile = filepath,
+                mode = "wb",
+                quiet = TRUE)
+  filepath
 }
 
 #' Form the URL to download a given file from the Zenodo data repository

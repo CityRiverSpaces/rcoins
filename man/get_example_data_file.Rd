@@ -4,10 +4,7 @@
 \alias{get_example_data_file}
 \title{Retrieve an example data file from the data repository}
 \usage{
-get_example_data_file(filename, force_download = FALSE)
-}
-\arguments{
-\item{force_download}{Download data even if cached data is available}
+get_example_data_file(filename)
 }
 \value{
 A character string representing the file path
