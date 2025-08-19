@@ -34,11 +34,11 @@ get_example_data_file <- function(filename) {
   # temporarily increase timeout, reset value on exit
   op <- options(timeout = 120)
   on.exit(options(op))
-  data <- retry(download.file,
-                url = download_url,
-                destfile = filepath,
-                mode = "wb",
-                quiet = TRUE)
+  retry(download.file,
+        url = download_url,
+        destfile = filepath,
+        mode = "wb",
+        quiet = TRUE)
   filepath
 }
 
