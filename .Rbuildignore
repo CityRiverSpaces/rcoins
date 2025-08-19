@@ -4,6 +4,8 @@
 ^\.github$
 ^environment\.yml$
 ^_pkgdown\.yml$
+^pkgdown$
+^vignette\/figure$
 ^CITATION.cff$
 ^scripts$
 ^cran-comments\.md$

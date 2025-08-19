@@ -9,20 +9,22 @@ vignette: >
 
 <!-- using-rcoins.Rmd is generated from using-rcoins.Rmd.orig. Please edit that file -->
 
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
 
-
-
-``` r
+```{r setup}
 library(rcoins)
 library(sf)
-#> Linking to GEOS 3.13.0, GDAL 3.8.5, PROJ 9.5.1; sf_use_s2() is TRUE
 library(ggplot2)
 ```
 
 In this article we demonstrate how to trace continuous streets using the `stroke()` function. The function takes an `sf` object of streets and returns a new `sf` object with continuous streets.
 
-
-``` r
+```{r}
 # Load streets from example OSM data
 bucharest <- get_example_data()
 streets <- bucharest$streets
@@ -32,22 +34,31 @@ streets <- bucharest$streets
 
 If we run the `stroke()` function with the default values, strokes will be calculated on the network as a whole.
 
-
-``` r
+```{r}
 # Trace continuous streets
 continuous_streets <- stroke(streets)
 ```
 
 To visualise the strokes in a more intuitive way, we map the line weight in the plot to the length of the strokes. The thicker a line is, the longer the stroke.
 
-![plot of chunk plot-streets](figure/plot-streets-1.png)
+```{r plot-streets, echo=FALSE}
+length <- sf::st_length(continuous_streets)
+ggplot() +
+  geom_sf(data = continuous_streets, aes(linewidth = as.numeric(length))) +
+  scale_linewidth_continuous(name = "Continuous lines", range = c(0.1, 1.2)) +
+  xlim(418500, 437500) +
+  ylim(4909800, 4931500) +
+  coord_sf(datum = st_crs(32635)) +
+  labs(title = "Continuous streets along the main street network of Bucharest",
+       subtitle = "Lineweight by length",
+       caption = "Data: OpenStreetMap")
+```
 
 ## Tracing from specified streets
 
 To trace continuous streets from a given set of streets, we can add the edge indices in the `from_edge` argument. We demonstrate this by tracing all continuous streets crossing river Dâmbovița in Bucharest. We load the river centerline from the example data.
 
-
-``` r
+```{r}
 # Load river centerline from example data
 river_centerline <- bucharest$river_centerline
 
@@ -64,7 +75,18 @@ Note that the input argument `angle_threshold` sets the minimum internal angle b
 
 We plot the street network and emphasize the continuous streets crossing the river.
 
-![plot of chunk plot-continuous-streets](figure/plot-continuous-streets-1.png)
+```{r plot-continuous-streets, echo=FALSE}
+ggplot() +
+  geom_sf(data = river_centerline, linewidth = 1, colour = "blue") +
+  geom_sf(data = streets, linewidth = 0.2, colour = "black") +
+  geom_sf(data = continuous_streets_crossing, linewidth = 2, colour = "red") +
+  xlim(418500, 437500) +
+  ylim(4909800, 4931500) +
+  coord_sf(datum = st_crs(32635)) +
+  labs(title = "Continuous streets crossing River Dâmbovița in Bucharest",
+       subtitle = "Crossing streets thicker",
+       caption = "Data: OpenStreetMap")
+```
 
 ## Maintaining the initial structure
 
