@@ -10,3 +10,4 @@
 ^codemeta\.json$
 ^.*\.Rproj$
 ^\.Rproj\.user$
+^README\.Rmd$
