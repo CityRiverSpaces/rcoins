@@ -19,6 +19,12 @@ l6 <- sf::st_linestring(c(p3, p6))
 l7 <- sf::st_linestring(c(p5, p6))
 
 
+test_that("a stroke is found even for a single segment", {
+  sfc <- sf::st_sfc(l1)
+  actual <- stroke(sfc)
+  expect_setequal(actual, sfc)
+})
+
 test_that("a stroke is found in a very simple network", {
   sfc <- sf::st_sfc(l1, l2, l3)
   #           p4
