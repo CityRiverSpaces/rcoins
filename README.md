@@ -87,7 +87,7 @@ Plot streets
 ``` r
 plot(sf::st_geometry(streets),
      col = sf::sf.colors(n = nrow(streets), categorical = TRUE),
-     lwd = 5, xlim = c(418500, 437500), ylim = c(4909800, 4931500))
+     lwd = 2, xlim = c(418500, 437500), ylim = c(4909800, 4931500))
 ```
 
 </details>
@@ -110,7 +110,7 @@ Plot continuous streets
 ``` r
 plot(continuous_streets,
      col = sf::sf.colors(n = length(continuous_streets), categorical = TRUE),
-     lwd = 5, xlim = c(418500, 437500), ylim = c(4909800, 4931500))
+     lwd = 2, xlim = c(418500, 437500), ylim = c(4909800, 4931500))
 ```
 
 </details>

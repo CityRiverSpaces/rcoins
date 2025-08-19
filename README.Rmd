@@ -85,15 +85,15 @@ streets <- bucharest$streets
 ```{r eval=FALSE}
 plot(sf::st_geometry(streets),
      col = sf::sf.colors(n = nrow(streets), categorical = TRUE),
-     lwd = 5, xlim = c(418500, 437500), ylim = c(4909800, 4931500))
+     lwd = 2, xlim = c(418500, 437500), ylim = c(4909800, 4931500))
 ```
 
 </details>
 
-```{r streets, echo=FALSE}
+```{r streets, echo=FALSE, out.width="100%"}
 plot(sf::st_geometry(streets),
      col = sf::sf.colors(n = nrow(streets), categorical = TRUE),
-     lwd = 5, xlim = c(418500, 437500), ylim = c(4909800, 4931500))
+     lwd = 2, xlim = c(418500, 437500), ylim = c(4909800, 4931500))
 ```
 
 Determine continuous lines in the network as:
@@ -109,15 +109,15 @@ continuous_streets <- stroke(streets)
 ```{r eval=FALSE}
 plot(continuous_streets,
      col = sf::sf.colors(n = length(continuous_streets), categorical = TRUE),
-     lwd = 5, xlim = c(418500, 437500), ylim = c(4909800, 4931500))
+     lwd = 2, xlim = c(418500, 437500), ylim = c(4909800, 4931500))
 ```
 
 </details>
 
-```{r continuous-streets, echo=FALSE}
+```{r continuous-streets, echo=FALSE, out.width="100%"}
 plot(continuous_streets,
      col = sf::sf.colors(n = length(continuous_streets), categorical = TRUE),
-     lwd = 5, xlim = c(418500, 437500), ylim = c(4909800, 4931500))
+     lwd = 2, xlim = c(418500, 437500), ylim = c(4909800, 4931500))
 ```
 
 [osm]: https://www.openstreetmap.org/
