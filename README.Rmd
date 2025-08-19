@@ -78,17 +78,7 @@ bucharest <- get_example_data()
 streets <- bucharest$streets
 ```
 
-<details>
-
-<summary> Plot streets </summary>
-  
-```{r eval=FALSE}
-plot(sf::st_geometry(streets),
-     col = sf::sf.colors(n = nrow(streets), categorical = TRUE),
-     lwd = 2, xlim = c(418500, 437500), ylim = c(4909800, 4931500))
-```
-
-</details>
+Plot streets: 
 
 ```{r streets, echo=FALSE, out.width="100%"}
 plot(sf::st_geometry(streets),
@@ -102,17 +92,7 @@ Determine continuous lines in the network as:
 continuous_streets <- stroke(streets)
 ```
 
-<details>
-
-<summary> Plot continuous streets </summary>
-
-```{r eval=FALSE}
-plot(continuous_streets,
-     col = sf::sf.colors(n = length(continuous_streets), categorical = TRUE),
-     lwd = 2, xlim = c(418500, 437500), ylim = c(4909800, 4931500))
-```
-
-</details>
+Plot continuous streets:
 
 ```{r continuous-streets, echo=FALSE, out.width="100%"}
 plot(continuous_streets,
