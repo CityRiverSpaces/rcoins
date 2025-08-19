@@ -20,6 +20,6 @@ load the example data from disk without having to re-download the data.
 }
 \examples{
 \dontshow{if (interactive()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
-get_osm_example_data()
+get_example_data()
 \dontshow{\}) # examplesIf}
 }
