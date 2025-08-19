@@ -1,5 +1,5 @@
 
-# rcoins
+# rcoins <a href="https://cityriverspaces.github.io/rcoins/"><img src="man/figures/logo.png" align="right" height="137" alt="rcoins website" /></a>
 
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/CityRiverSpaces/rcoins/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/CityRiverSpaces/rcoins/actions/workflows/R-CMD-check.yaml)
