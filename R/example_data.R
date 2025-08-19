@@ -14,7 +14,7 @@
 #' @export
 #'
 #' @examplesIf interactive()
-#' get_osm_example_data()
+#' get_example_data()
 get_example_data <- function() {
   file <- get_example_data_file("bucharest_osm.gpkg")
   names <- sf::st_layers(file)$name
