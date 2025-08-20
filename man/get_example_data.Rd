@@ -2,18 +2,21 @@
 % Please edit documentation in R/example_data.R
 \name{get_example_data}
 \alias{get_example_data}
-\title{Get example data}
+\title{Get example OSM data}
 \usage{
 get_example_data()
 }
 \value{
-A list of sf objects containing the OSM data.
+A list of sf objects containing the OSM data as \code{\link[sf:sfc]{sf::sfc}}
+objects.
 }
 \description{
-This function retrieves example OpenStreetMap (OSM) data for the city of
-Bucharest, Romania, from a persistent URL on the 4TU.ResearchData data
-repository. The dataset includes the street network and the geometry of the
-Dâmbovița river.
+This function retrieves example OpenStreetMap (OSM) data from the
+Zenodo data repository, and it can be used in examples and tests. The code
+used to generate the example dataset is available at
+https://github.com/CityRiverSpaces/CRiSpExampleData. Note that the example
+dataset is cached locally, so that subsequent calls to the function can
+load the example data from disk without having to re-download the data.
 }
 \examples{
 \dontshow{if (interactive()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}

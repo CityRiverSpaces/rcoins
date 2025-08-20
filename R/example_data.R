@@ -1,11 +1,14 @@
-#' Get example data
+#' Get example OSM data
 #'
-#' This function retrieves example OpenStreetMap (OSM) data for the city of
-#' Bucharest, Romania, from a persistent URL on the 4TU.ResearchData data
-#' repository. The dataset includes the street network and the geometry of the
-#' Dâmbovița river.
+#' This function retrieves example OpenStreetMap (OSM) data from the
+#' Zenodo data repository, and it can be used in examples and tests. The code
+#' used to generate the example dataset is available at
+#' https://github.com/CityRiverSpaces/CRiSpExampleData. Note that the example
+#' dataset is cached locally, so that subsequent calls to the function can
+#' load the example data from disk without having to re-download the data.
 #'
-#' @return A list of sf objects containing the OSM data.
+#' @return A list of sf objects containing the OSM data as [`sf::sfc`]
+#'   objects.
 #' @importFrom utils download.file
 #' @importFrom stats setNames
 #' @export
@@ -13,14 +16,68 @@
 #' @examplesIf interactive()
 #' get_example_data()
 get_example_data <- function() {
-  # nolint start
-  url_osm <- "https://data.4tu.nl/file/f5d5e118-b5bd-4dfb-987f-fe10d1b9b386/f519315e-b92d-4815-b924-3175bd2a7a61"
-  # nolint end
-  temp_file <- tempfile(fileext = ".gpkg")
-  # temporarily increate timeout, reset value on exit
-  op <- options(timeout = 300)
-  on.exit(options(op))
-  download.file(url_osm, destfile = temp_file, mode = "wb", quiet = TRUE)
-  layers <- c("streets", "river_centerline")
-  sapply(layers, \(x) sf::st_read(temp_file, layer = x, quiet = TRUE))
+  file <- get_example_data_file("bucharest_osm.gpkg")
+  names <- sf::st_layers(file)$name
+  lapply(names, \(layer) sf::st_read(file, layer = layer, quiet = TRUE)) |>
+    setNames(names)
 }
+
+#' Retrieve an example data file from the data repository
+#'
+#' Store the file in the cache directory, for subsequent reuse.
+#'
+#' @return A character string representing the file path
+#' @keywords internal
+get_example_data_file <- function(filename) {
+  download_url <- get_download_url(filename)
+  filepath <- tempfile(fileext = ".gpkg")
+  # temporarily increase timeout, reset value on exit
+  op <- options(timeout = 120)
+  on.exit(options(op))
+  retry(download.file,
+        url = download_url,
+        destfile = filepath,
+        mode = "wb",
+        quiet = TRUE)
+  filepath
+}
+
+#' Form the URL to download a given file from the Zenodo data repository
+#'
+#' @noRd
+get_download_url <- function(filename) {
+  paste(zenodo_record_url, "files", filename, sep = "/")
+}
+
+#' Retry function call, for interaction with APIs and external services
+#'
+#' @noRd
+retry <- function(func, ..., max_retries = 5, delay = 2) {
+  attempt <- 1
+  while (attempt <= max_retries) {
+    result <- tryCatch({
+      func(...)  # Call the function with arguments
+    }, error = function(e) {
+      message(sprintf("Attempt %d failed: %s", attempt, e$message))
+      NULL
+    })
+
+    if (!is.null(result)) {
+      return(result)  # Successfully retrieved result
+    }
+
+    message(sprintf("Retrying in %d seconds...", delay))
+    Sys.sleep(delay)
+    attempt <- attempt + 1
+  }
+
+  message("Function failed after multiple attempts.")
+  NULL
+}
+
+#' Example data files that can be used in examples and tests are stored in
+#' a Zenodo data repository (DOI: 10.4121/f5d5e118-b5bd-4dfb-987f-fe10d1b9b386).
+#' Files can be downloaded programmatically from the following URL.
+#'
+#' @noRd
+zenodo_record_url <- "https://zenodo.org/records/16325879"

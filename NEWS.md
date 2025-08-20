@@ -10,6 +10,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Package logo is added [#78](https://github.com/CityRiverSpaces/rcoins/pull/78)
 - The README.md file is now automatically generated from a .Rmd file [#82](https://github.com/CityRiverSpaces/rcoins/pull/82)
 
+## Changed
+
+- Example datasets are accessed from Zenodo (they were previously retrieved from 4TUResearchData). To make the package check more robust with respect to missing/failing data access, the vignette is frozen and tests using example data is skipped on CRAN [#83](https://github.com/CityRiverSpaces/rcoins/pull/83)
+
 ## Fixed
 
 - Fixed DOI badge to point to all versions [#79](https://github.com/CityRiverSpaces/rcoins/pull/79)
