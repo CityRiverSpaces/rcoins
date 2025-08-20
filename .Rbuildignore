@@ -4,7 +4,10 @@
 ^\.github$
 ^environment\.yml$
 ^_pkgdown\.yml$
+^docs$
 ^pkgdown$
+^doc$
+^Meta$
 ^CITATION.cff$
 ^scripts$
 ^cran-comments\.md$
