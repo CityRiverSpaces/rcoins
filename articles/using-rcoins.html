@@ -66,10 +66,11 @@
 
     
     
+<!-- using-rcoins.Rmd is generated from using-rcoins.Rmd.orig. Please edit that file -->
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://cityriverspaces.github.io/rcoins/">rcoins</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/" class="external-link">sf</a></span><span class="op">)</span></span>
-<span><span class="co">#&gt; Linking to GEOS 3.12.1, GDAL 3.8.4, PROJ 9.4.0; sf_use_s2() is TRUE</span></span>
+<span><span class="co">#&gt; Linking to GEOS 3.13.0, GDAL 3.8.5, PROJ 9.5.1; sf_use_s2() is TRUE</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span></code></pre></div>
 <p>In this article we demonstrate how to trace continuous streets using
 the <code><a href="../reference/stroke.html">stroke()</a></code> function. The function takes an
@@ -90,7 +91,9 @@ strokes will be calculated on the network as a whole.</p>
 <p>To visualise the strokes in a more intuitive way, we map the line
 weight in the plot to the length of the strokes. The thicker a line is,
 the longer the stroke.</p>
-<p><img src="using-rcoins_files/figure-html/unnamed-chunk-4-1.png" width="700"></p>
+<div class="float">
+<img src="figures/using-rcoins-plot-streets-1.png" alt="plot of chunk plot-streets"><div class="figcaption">plot of chunk plot-streets</div>
+</div>
 </div>
 <div class="section level2">
 <h2 id="tracing-from-specified-streets">Tracing from specified streets<a class="anchor" aria-label="anchor" href="#tracing-from-specified-streets"></a>
@@ -115,7 +118,9 @@ minimum internal angle between consecutive line segments that can be
 considered part of a continuous stroke.</p>
 <p>We plot the street network and emphasize the continuous streets
 crossing the river.</p>
-<p><img src="using-rcoins_files/figure-html/unnamed-chunk-6-1.png" width="700"></p>
+<div class="float">
+<img src="figures/using-rcoins-plot-continuous-streets-1.png" alt="plot of chunk plot-continuous-streets"><div class="figcaption">plot of chunk plot-continuous-streets</div>
+</div>
 </div>
 <div class="section level2">
 <h2 id="maintaining-the-initial-structure">Maintaining the initial structure<a class="anchor" aria-label="anchor" href="#maintaining-the-initial-structure"></a>
