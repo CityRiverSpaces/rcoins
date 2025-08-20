@@ -1,14 +1,13 @@
 ## Resubmission
 
-This is a resubmission. In this version I have:
+This is a resubmission to solve problems identified by package checks on CRAN. Specifically, we have:
 
-* Fixed the reference style in the "Description" field of the DESCRIPTION file, which now reads:
-  "... the Continuity in Street Networks (COINS) method from Tripathy et al. (2021) <doi:10.1177/2399808320967680>, ..."
+* Modified `get_example_data()` so that it fails gracefully if remote datasets are not reachable.
 
-* Fixed the call to `on.exit()` to revert to previous user options (see `R/example_data.R` lines 21-22).
+* Setup vignettes and tests so that they do not require access to remote datasets.
+
+* Introduced a couple of small bug and metadata fixes (all changes are listed in NEWS.md).
 
 ## R CMD check results
 
-0 errors | 0 warnings | 1 note
-
-* This is a new release.
+0 errors | 0 warnings | 0 note
