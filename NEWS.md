@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Fixed DOI badge to point to all versions [#79](https://github.com/CityRiverSpaces/rcoins/pull/79)
 - Fixed small CITATION.cff formatting and abstract field [#80](https://github.com/CityRiverSpaces/rcoins/pull/80)
-- Calculating strokes on a network with a signle segment is now possible [#84](https://github.com/CityRiverSpaces/rcoins/pull/84)
+- Calculating strokes on a network with a single segment is now possible [#84](https://github.com/CityRiverSpaces/rcoins/pull/84)
 
 # Version 0.3.2 - 2025-05-27
 
