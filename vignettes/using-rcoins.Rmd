@@ -40,7 +40,7 @@ continuous_streets <- stroke(streets)
 
 To visualise the strokes in a more intuitive way, we map the line weight in the plot to the length of the strokes. The thicker a line is, the longer the stroke.
 
-![plot of chunk plot-streets](figure/plot-streets-1.png)
+![plot of chunk plot-streets](figures/using-rcoins-plot-streets-1.png)
 
 ## Tracing from specified streets
 
@@ -64,7 +64,7 @@ Note that the input argument `angle_threshold` sets the minimum internal angle b
 
 We plot the street network and emphasize the continuous streets crossing the river.
 
-![plot of chunk plot-continuous-streets](figure/plot-continuous-streets-1.png)
+![plot of chunk plot-continuous-streets](figures/using-rcoins-plot-continuous-streets-1.png)
 
 ## Maintaining the initial structure
 
