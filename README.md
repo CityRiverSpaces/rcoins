@@ -7,6 +7,8 @@
 
 [![R-CMD-check](https://github.com/CityRiverSpaces/rcoins/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/CityRiverSpaces/rcoins/actions/workflows/R-CMD-check.yaml)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.14501804.svg)](https://doi.org/10.5281/zenodo.14501804)
+[![Rbanism: R
+package](https://img.shields.io/static/v1?label=Rbanism&message=R%20package&labelColor=93278F&color=00A99D&style=flat-square)](https://github.com/Rbanism)
 <!-- badges: end -->
 
 Identify continuous lines in a network using an approach based on the
